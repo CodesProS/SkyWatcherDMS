@@ -1,0 +1,629 @@
+<html>
+    <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>SkyWatcher</title>
+        <link rel="stylesheet" href="css/Css.css">
+        <link rel="icon" href="Images\cloudy-day.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Sacramento&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.3.0/luxon.min.js"></script>
+
+    </head>
+
+    <script>
+
+var city = 'Mumbai';
+var bar = "";
+       document.addEventListener('DOMContentLoaded', function() {
+
+    const deviceType = detectDeviceType();
+        if(deviceType == "Mobile")
+       {
+           document.getElementById('container').classList.remove("horizontal");
+           document.getElementById('container').classList.add("vertical");
+           document.getElementById('left').style.width = "100%";
+           document.getElementById('ri').style.width = "100%";
+        }
+        console.log(deviceType);
+
+    function createring(data) {
+        document.getElementById('chart').innerHTML = "";
+        var options = {
+            chart: {
+                height: 350,
+                type: 'radialBar'
+            },
+            series: [data],
+            plotOptions: {
+                radialBar: {
+                    hollow: {
+                        margin: 5,
+                        size: '50%'
+                    },
+                    dataLabels: {
+                        showOn: 'always',
+                        name: {
+                            show: false
+                        },
+                        value: {
+                            color: '#111',
+                            fontSize: '20px',
+                            show: true,
+                            offsetY: 10,
+                            style: {
+                                fontSize: '20px',
+                                fontFamily: "Montserrat, sans-serif",
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    }
+
+    function createbar(h, w, c, t, v)
+    {
+        document.getElementById('temperatureChart').innerHTML = "";
+    var ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
+    const comparisonChart = new Chart(ctxTemperature, {
+    type: 'bar',
+    data: {
+        labels: ['Humidity (%)', 'Wind Speed (m/s)', 'Cloudiness (%)', 'Temperature', 'Visibility (Km)'],
+        datasets: [
+            {
+                label: 'Weather Data',
+                data: [h, w, c, t, v/1000],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(75, 192, 192, 1)'
+
+                ],
+                borderWidth: 1
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 20
+                }
+            }
+        },
+        plugins: {
+                legend: {
+                    display: false 
+                }
+            }
+    }
+});
+bar = comparisonChart;
+    }
+
+    /*
+    var temperatureChart = new Chart(ctxTemperature, {
+        type: 'line',
+        data: {
+            labels: ['Now', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: weatherData.temperature,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });*/
+
+    const apiKey = '8a548b351297cf62646667f93bddb05b';
+
+    async function getWeather() {
+        try {
+            console.log(city);
+            var url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            displayWeather(data);
+            console.log(data);
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+        }
+    }
+
+    function displayWeather(data) {
+        const temperature = (data.main.temp - 273.15).toFixed(1);
+        const humidity = data.main.humidity;
+        const des = data.weather[0].description;
+        const pres = data.main.pressure;
+
+        const timestamp = data.dt * 1000;
+        const timezoneOffset = data.timezone * 1000;
+        const localDate = new Date(timestamp + timezoneOffset);
+
+        const options = { day: 'numeric', month: 'long' };
+        const formattedDate = localDate.toLocaleDateString('en-US', options);
+        document.getElementById('today').innerHTML = (formattedDate != "Invalid Date") ? formattedDate : "";
+        console.log(formattedDate);
+
+        createring(humidity);
+        document.getElementById("temp").innerHTML = temperature + " °C";
+        document.getElementById("vis").innerHTML = data.visibility + " m";
+        document.getElementById("feels").innerHTML = (data.main.feels_like - 273.15).toFixed(1) + " °C";
+
+        document.getElementById('pcloud').style.width = (data.clouds.all) + '%';
+        document.getElementById('feelsli').style.width = (data.main.feels_like - 273.15).toFixed(1) * 2 + "%";
+        document.getElementById('wspeed').innerHTML = data.wind.speed + " m/s";
+        document.getElementById('cloudiness').innerHTML = data.clouds.all + "%";
+        document.getElementById('pressure').innerHTML = (pres) + " hPa";
+        console.log("h y");
+
+        document.getElementById('wi').innerHTML = des.charAt(0).toUpperCase() + des.slice(1);
+
+        if(bar == "")
+            createbar(humidity, data.wind.speed, data.clouds.all, temperature, data.visibility);
+        else
+        {
+            bar.data.datasets[0].data = [humidity, data.wind.speed, data.clouds.all, temperature, data.visibility];
+            bar.update();
+        }
+
+        //updateCityDateTime();
+        const iconCode = data.weather[0].id;
+        console.log("code " + iconCode);
+        var icon = "";
+        document.getElementById('dcloud').style.display = "none";
+        document.getElementById('cloud1').style.display = "block";
+        document.getElementById('cloud2').style.display = "block";
+        document.getElementById('cloud3').style.display = "block";
+        switch (true) {
+        case (iconCode >= 200 && iconCode < 300):
+            icon = "Images/lightning-bolt-.png";
+            break;
+        case (iconCode >= 300 && iconCode < 400):
+            icon = "Images/drizzle.png";
+            break;
+        case (iconCode >= 500 && iconCode < 600):
+            icon = "Images/storm.png";
+            break;
+        case (iconCode >= 600 && iconCode < 700):
+            icon = "Images/snow.png";
+            break;
+        case (iconCode >= 700 && iconCode < 800):
+            icon = "Images/tree.png";
+            break;
+        case (iconCode === 800):
+            icon = "";
+            break;
+        case (iconCode >= 801 && iconCode < 900):
+            icon = "Images/cloud.png";
+            document.getElementById('dcloud').style.display = "block";
+            break;
+        default:
+            icon = "";
+    }
+        
+        document.querySelectorAll('.cloudright').forEach(element => {
+        element.src = icon;
+        if(icon == "")
+        {
+            element.style.display = "none";
+        }
+        else
+        {
+        if(icon != "Images/cloud.png") {
+            element.style.height = "100px";
+            element.style.width = "100px";
+        }
+        else {
+            element.style.height = "48px";
+            element.style.width = "150px";
+        }}
+        });
+
+        document.querySelectorAll('.cloudleft').forEach(element => {
+        element.src = icon;
+        if(icon == "")
+        {
+            element.style.display = "none";
+        }
+        else
+        {
+        if(icon != "Images/cloud.png") {
+            element.style.height = "100px";
+            element.style.width = "100px";
+        }
+        else {
+            element.style.height = "48px";
+            element.style.width = "150px";
+        }}
+        });
+        }
+
+    window.getWeather = getWeather;
+
+    getWeather();
+});
+
+let countries = [];
+let cities = [];
+let ids = [];
+
+var timezone = "Asia/Kolkata";
+
+var headers = new Headers();
+headers.append("X-CSCAPI-KEY", "Wmc5d2lTaWM1dGNyZ1NNVnU4VzU5VjdGek4zZUJ5dEZIbk9Ca3k3cg==");
+
+var requestOptions = {
+    method: 'GET',
+    headers: headers,
+    redirect: 'follow'
+};
+
+function fetchCountries() {
+    fetch("https://api.countrystatecity.in/v1/countries", requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            countries = data.map(item => item.name) || [];
+            ids = data.map(item => item.iso2) || [];
+            console.log(ids);
+            console.log('Countries:', countries);
+            displayCountries(countries);
+        })
+        .catch(error => {
+            console.error('Error fetching countries:', error);
+        });
+}
+
+function fetchCities(countryCode) {
+    fetch(`https://api.countrystatecity.in/v1/countries/${countryCode}/cities`, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            cities = data.map(item => item.name) || [];
+            console.log(cities);
+            displayCities(cities);
+        })
+        .catch(error => {
+            console.error('Error fetching cities:', error);
+        });
+}
+
+function displayCountries(countries) {
+    document.getElementById('dropdown-content').style.display = "block";
+    const countryList = document.getElementById("countryList");
+    countryList.innerHTML = '';
+    countries.forEach(country => {
+        const countryDiv = document.createElement("div");
+        countryDiv.textContent = country;
+        countryDiv.className = 'country-item';
+        countryDiv.style.width = "100%";
+        countryDiv.onclick = () => selectCountry(country);
+        countryList.appendChild(countryDiv);
+    });
+}
+
+function selectCountry(countryName) {
+    document.getElementById("searchInput").value = countryName;
+    document.getElementById("dropdown-content").style.display = "none";
+    document.getElementById("citydropdown-content").style.display = "block";
+    const countryCode = getCountryCodeByName(countryName);
+    console.log(countryCode);
+    scountry = countryName;
+    fetchCities(countryCode);
+}
+
+function getCountryCodeByName(countryName) {
+    var index = countries.indexOf(countryName);
+    return ids[index];
+}
+
+function popup2()
+{
+    document.getElementById("pcontainer").style.display = "block";
+    document.getElementById("ri").style.display = "none";
+    console.log('s');
+}
+
+function popup1()
+{
+    /*document.getElementById("pcontainer").style.display = "none";
+    document.getElementById("ri").style.display = "block";
+    console.log('s');*/
+
+    var myWindow = window.open("popup.html", "_blank", "width=" + screen.width + ",height=" + screen.height);
+    myWindow.moveTo(0, 0);
+
+}
+
+function displayCities(cities) {
+    const cityList = document.getElementById("cityList");
+    cityList.innerHTML = '';
+    cities.forEach(city => {
+        const cityDiv = document.createElement("div");
+        cityDiv.textContent = city;
+        cityDiv.className = 'country-item';
+        cityDiv.onclick = () => selectCity(city);
+        cityList.appendChild(cityDiv);
+    });
+    document.getElementById("citydropdown-content").style.display = "block";
+}
+
+function filterFunction() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const filteredCountries = countries.filter(country =>
+        country.toLowerCase().includes(input)
+    );
+    displayCountries(filteredCountries);
+}
+
+function filterCities() {
+    const input = document.getElementById("citysearchInput").value.toLowerCase();
+    const filteredCities = cities.filter(city =>
+        city.toLowerCase().includes(input)
+    );
+    displayCities(filteredCities);
+}
+
+function selectCity(cityName) {
+    document.getElementById("citysearchInput").value = cityName;
+    document.getElementById("dropdown").style.display = "none";
+    document.getElementById("dropdown-content").style.display = "block";
+    document.getElementById("citydropdown-content").style.display = "none";
+    city = cityName;
+    console.log("Selected City:", cityName);
+    document.getElementById('location').innerHTML = city + ", " + scountry;
+    document.getElementById("dropbox").style.marginBottom = "-30px";
+    window.getWeather(); // Call the globally accessible getWeather function
+}
+
+function toggleDropdown() {
+    console.log('re');
+    const dropdown = document.getElementById("dropdown");
+    if(dropdown.style.display == "block")
+        document.getElementById("dropbox").style.marginBottom = "-30px";
+    else {
+        document.getElementById("dropbox").style.marginBottom = "0";
+        displayCountries(countries);
+    }
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    console.log(dropdown.style.display);
+    console.log(document.getElementById('dropdown').style.display);
+    document.getElementById('searchInput').value = "";
+    document.getElementById('citysearchInput').value = "";
+}
+
+function setDim() {
+    document.getElementById('dropdown-content').style.width = document.getElementById('dropbox').clientWidth;
+    console.log(document.getElementById('dropbox').clientWidth);
+    console.log(document.getElementById('dropdown-content').clientWidth);
+}
+
+var scountry = "India";
+
+
+window.onload = function() {
+    fetchCountries();
+    setDim();
+};
+
+window.onclick = function(event) {
+    if (!event.target.matches('#dropbox') && !event.target.matches('#dropbox *') && !event.target.matches('.dropdown-content') && !event.target.matches('.dropdown-content *') && !event.target.matches('.citydropdown-content') && !event.target.matches('.citydropdown-content *')) {
+        document.getElementById("dropbox").style.marginBottom = "-30px";
+        console.log("d");
+        document.getElementById("dropdown").style.display = "none";
+}
+}
+
+function detectDeviceType() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Regular expressions to detect mobile devices
+            if (/windows phone/i.test(userAgent)) {
+                return "Mobile";
+            }
+            if (/android/i.test(userAgent)) {
+                return "Mobile";
+            }
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return "Mobile";
+            }
+            return "Desktop";
+        }
+
+        // Display the detected device type
+    
+        </script>
+        
+
+    <body>
+       
+    <div class="horizontal" id="container">
+        <div id="left">
+            <br>
+            <br>
+            <div class="horizontal" style="align-items: center; vertical-align: middle;">
+                
+            <div id="dropbox" onclick="toggleDropdown()" class="horizontal left_box" style="margin-bottom: -30px; border: 2px solid #E4F1FF; border-radius: 10px; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; width: 80%;">
+                <h4 class="icon" style="margin: 0; margin-right: 15px;">near_me</h4>
+                <h4 id="location" class="left_label" style="margin: 0;">Mumbai, India</h4>
+                <h4 class="icon" style="margin: 0; margin-right: 15px; margin-left: auto;">arrow_drop_down</h4>
+            </div>
+        
+
+            <div id="dropdown" class="dropdown">
+                <div id="dropdown-content" class="dropdown-content">
+                  <input type="text" id="searchInput" onkeyup="filterFunction()" placeholder="Search for countries..">
+                  <div id="countryList"></div>
+                </div>
+                <div id="citydropdown-content" class="citydropdown-content">
+                  <input type="text" id="citysearchInput" onkeyup="filterCities()" placeholder="Search for cities..">
+                  <div id="cityList"></div>
+                </div>
+            </div>
+            </div>
+
+            <br>
+
+            <div class="left_box"> <h5 id="today" class="left_label light">28 Sept</h4></div>
+            <br>
+            <br>
+
+            <div>
+            <h1 style="margin-left: auto; margin-right: auto; width: 100%; text-align: center; margin-bottom: 10px;" id="temp">31 °</h1>
+            <div class="horizontal">
+                <h4 class="icon" style="margin: 0; margin-right: 15px; margin-left: auto;">info</h4>
+                <h3 id="wi" class="left_label_light" style="color: white; text-align: center; margin-right: auto;">Moderate rain</h3>
+            </div>
+        </div>
+            <div style="width: 100%;">
+                <!--   <br>
+                
+                <img height="200px" width="200px" id="icon" alt="Weather Icon">
+                <br>
+                <br>
+            -->
+            <br>
+                <img id="cloud1" class="cloudright" src="Images\cloud.png" alt="Cloud Image">
+                <br>
+                <img id="cloud2" class="cloudleft" src="Images\cloud.png" alt="Cloud Image">
+                <br>
+                <img id="cloud3" class="cloudright" src="Images\cloud.png" alt="Cloud Image">
+                <br>
+                <img id="dcloud" class="cloudleft" src="Images\cloud.png" alt="Cloud Image">
+            </div> 
+
+
+        </div>
+
+
+        <div class="top-container" id="ri">
+            <button class="icon" id="float" onclick="popup1()">add</button>
+            <div class="card" id="temp-container">
+                <h3>Weather Forecast</h3>
+                <canvas id="temperatureChart" style="width: 100%; height: 20%"></canvas>
+            </div>
+            <br>
+            <h3 style="margin-left: 8%;">More Details</h3>
+            <div class="horizontal">
+                <div class="card" style="width: 15%; padding-top: 10px; padding-bottom: 10px;">
+                    <div class="horizontal">
+                        <h4 style="text-align: left; width: 100%;">Feels Like</h4>
+                        <div class="circle">
+                            <p class="icon" style="margin: 0;">thermostat</p>
+                        </div>
+                    </div>
+                    <h3 class="data" style="text-align: center;" id="feels"><b>31 °</b></h3>
+                    <div class="label-container">
+                        <div class="dlabel">0 °</div>
+                        <div class="dlabel">25 °</div>
+                        <div class="dlabel">50 °</div>
+                    </div>
+                    <div class="progress-bar-container" style="margin-top: 5px; margin-bottom: 15px;">
+                        <div class="progress-bar chance-of-rain" id="feelsli"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="width: 15%; padding-top: 10px; padding-bottom: 10px;">
+                    <div class="horizontal">
+                        <h4 style="text-align: left; width: 100%;">Humidity</h4>
+                        <div class="circle">
+                            <p class="icon" style="margin: 0;">local_fire_department</p>
+                        </div>
+                    </div>
+                    <div id="chart"></div>
+                    <!--<h3 style="text-align: center;" id="speed"><b>82%</b></h3>-->
+
+                </div>
+
+                <div class="card" style="width: 15%; padding-top: 10px; padding-bottom: 10px;">
+                    <div class="horizontal">
+                        <h4 style="text-align: left; width: 100%;">Cloudiness</h4>
+                        <div class="circle">
+                            <p class="icon" style="margin: 0;">cloud</p>
+                        </div>
+                    </div>
+                    <h3 class="data" style="text-align: center;" id="cloudiness"><b>82%</b></h3>
+                    <div class="label-container">
+                        <div class="dlabel">0%</div>
+                        <div class="dlabel">25%</div>
+                        <div class="dlabel">50%</div>
+                        <div class="dlabel">100%</div>
+                    </div>
+                    <div class="progress-bar-container" style="margin-top: 5px; margin-bottom: 15px;">
+                        <div class="progress-bar chance-of-rain" id="pcloud"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <br>
+            <br>
+
+            <div class="horizontal">
+                <div class="card" style="width: 15%; padding-top: 10px; padding-bottom: 10px;">
+                    <div class="horizontal">
+                        <h4 style="text-align: left; width: 100%;">Wind Speed</h4>
+                        <div class="circle">
+                            <p class="icon" style="margin: 0;">speed</p>
+                        </div>
+                    </div>
+                    <h3 class="data" style="text-align: center; margin: 0;" id="wspeed"><b>82%</b></h3>
+                    
+                </div>
+
+                <div class="card" style="width: 15%; padding-top: 10px; padding-bottom: 10px;">
+                    <div class="horizontal">
+                        <h4 style="text-align: left; width: 100%;">Visibility</h4>
+                        <div class="circle">
+                            <p class="icon" style="margin: 0;">visibility</p>
+                        </div>
+                    </div>
+                    <h3 class="data" style="text-align: center; margin: 0;" id="vis"><b>3 m</b></h3>
+
+                </div>
+
+                <div class="card" style="width: 15%; padding-top: 10px; padding-bottom: 10px;">
+                    <div class="horizontal">
+                        <h4 style="text-align: center; width: 100%;">Atmospheric Pressure</h4>
+                        <div class="circle">
+                            <p class="icon" style="margin: 0;">air</p>
+                        </div>
+                    </div>
+                    <h3 class="data" style="text-align: center; margin: 0;" id="pressure"><b>2 %</b></h3>
+
+                </div>
+
+            </div>
+        </div>
+        
+       
+    </div>
+    </body>
+</html>

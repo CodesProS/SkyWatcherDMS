@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Add a Record </title>
+  <link rel="stylesheet" href="pop.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Title section -->
+    <div class="title">Submit</div>
+    <div class="content">
+      <!-- Registration form -->
+      <form action="#">
+        <div class="user-details">
+        
+          <div class="input-box">
+            <span class="details">Temperature (C)</span>
+            <input type="number" placeholder="Temp" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Humidity</span>
+            <input type="number" placeholder="Humidity" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Wind Speed</span>
+            <input type="number" placeholder="Wind Speed" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Cloudiness %</span>
+            <input type="number" placeholder="Cloudiness %" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Visibility</span>
+            <input type="number" placeholder="Visibility" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Atmospheric Pressure</span>
+            <input type="number" placeholder="Atmospheric Pressure" required>
+          </div>
+          
+          
+        </div>
+
+        <div style="display: flex; gap: 50px;">
+        <div class="select-box">
+            <select>
+              <option hidden>Condition Type</option>
+              <option>Rain</option>
+              <option>Breeze</option>
+              <option>Snow</option>
+            </select>
+          </div>
+
+          <div class="select-box">
+            <select>
+              <option hidden>Alert Type</option>
+              <option>Flood</option>
+              <option>Warning</option>
+              <option>Earthquake</option>
+            </select>
+          </div>
+        </div>
+        <br>
+
+        <div class="conditions">
+            <div class="input-box">
+                <span class="details">Condition Explanation</span>
+                <input type="text" placeholder="Summary" required>
+              </div>
+        </div>
+
+        <br>
+        <div class="conditions">
+            <div class="input-box">
+                <span class="details">Alert description</span>
+                <input type="text" placeholder="Description of Alert" required>
+              </div>
+        </div>
+
+
+
+        <br>
+        
+        <div class="gender-details">
+           
+            <input type="radio" name="gender" id="dot-1">
+            <input type="radio" name="gender" id="dot-2">
+            <input type="radio" name="gender" id="dot-3">
+            <span class="gender-title">Insert Type</span>
+            <div class="category">
+             
+              <label for="dot-1">
+                <span class="dot one"></span>
+                <span class="gender">Weather</span>
+              </label>
+             
+              <label for="dot-2">
+                <span class="dot two"></span>
+                <span class="gender">Forecast</span>
+              </label>
+             
+              <label for="dot-3">
+                <span class="dot three"></span>
+                <span class="gender">Alerts</span>
+              </label>
+            </div>
+          </div>
+
+        <!-- Submit button -->
+        <div class="button">
+          <input type="submit" value="Submit">
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
