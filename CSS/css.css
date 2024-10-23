@@ -76,7 +76,44 @@ html, body{
     border-top-left-radius: 50px;
     border-bottom-left-radius: 50px;
     box-sizing: border-box;
-    overflow: hidden;
+    
+  }
+
+  .select-box {
+    height: 45px;
+    outline: none;
+    font-size: 16px;
+    border-radius: 10px;
+    padding-left: 15px;
+    border: 2px solid white;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .select-box select {
+    height: 100%;
+    width: 80%;
+    outline: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    background-color: #5C9CE5;
+    text-align: center;
+    font-family: 'Montserrat', 'Arial', sans-serif;
+  }
+  
+  .user-details :where(.input-box input, .select-box) {
+    height: 45px;
+    width: 100%;
+    outline: none;
+    font-size: 16px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border: 1px solid #ccc;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease;
   }
 
 .horizontal
@@ -148,8 +185,8 @@ html, body{
 html, body
 {
     margin: 0;
-    flex-grow: 0;
-    flex-shrink: 0;
+    /*flex-grow: 0;
+    flex-shrink: 0;*/
     overflow-x: hidden;
     background-color: #5C9CE5;
 }

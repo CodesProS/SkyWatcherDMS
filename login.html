@@ -4,151 +4,250 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email and Password Validation</title>
+    <title>SkyWatcher</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="login.css" />
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Lettering.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lettering.js/0.6.1/jquery.lettering.min.js"></script>
+
+  <!-- Textillate.js -->
+  <script src="https://cdn.rawgit.com/jschr/textillate/master/jquery.textillate.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mojs/core"></script>
+
     <!-- Boxicons CSS -->
-    <link
-      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet" />
   </head>
 
   <body>
-    <div class="container">
-      <!--<dotlottie-player src="https://lottie.host/8d128f70-a93c-43fd-85fc-aec26658849d/AudJWErIuq.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>-->
-      <header>Signup</header>
-      <form action="submit">
-        <div class="field email-field">
-          <div class="input-field">
-            <input type="email" placeholder="Enter your email" class="email" />
-          </div>
-          <span class="error email-error">
-            <i class="bx bx-error-circle error-icon"></i>
-            <p class="error-text">Please enter a valid email</p>
-          </span>
-        </div>
-        <div class="field create-password">
-          <div class="input-field">
-            <input
-              type="password"
-              placeholder="Create password"
-              class="password"
-            />
-            <i class="bx bx-hide show-hide"></i>
-          </div>
-          <span class="error password-error">
-            <i class="bx bx-error-circle error-icon"></i>
-            <p class="error-text">
-              Please enter at least 8 characters with number, symbol, small and
-              capital letter.
-            </p>
-          </span>
-        </div>
-        <div class="field confirm-password">
-          <div class="input-field">
-            <input
-              type="password"
-              placeholder="Confirm password"
-              class="cPassword"
-            />
-            <i class="bx bx-hide show-hide"></i>
-          </div>
-          <span class="error cPassword-error">
-            <i class="bx bx-error-circle error-icon"></i>
-            <p class="error-text">Passwords don't match</p>
-          </span>
-        </div>
-
-        <div class="line-container">
-          <hr class="line">
-          <p class="or-text">Or Login</p>
-          <hr class="line">
+    <div class="horizontal round" style="width: 60%; height: 600px; backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); padding: 0%; padding-top: 5px; padding-bottom: 5px; margin-right: 5px; background-color: #1c1b29">
+      <div style="height: 100%; width: 40%; margin-right: auto; margin-left: 50px; display: flex;
+      justify-content: space-between; flex-wrap: wrap;" id="cloud-container">
+        <br>
+        <br>
+        <h1 style="color: white; width: 100%; text-align: center; margin-top: 15px;">SkyWatcher</h1>
+        <br>
+        <br>
+        <br>
+        <br>
+        <img id="cloud1" class="cloudright" src="Images\cloud.png" alt="Cloud Image">
+        <br>
+                <img id="cloud2" class="cloudleft" src="Images\cloud.png" alt="Cloud Image">
+                <br>
+                <img id="cloud3" class="cloudright" src="Images\cloud.png" alt="Cloud Image">
+                <br>
+                <img id="dcloud" class="cloudleft" src="Images\cloud.png" alt="Cloud Image">
       </div>
 
+      <div id="container" class="container" style="width: 45%; height: 100%; align-items: center;">
+        <center><img src="Images/sunny.png" height="100px" width="100px"></center>
 
-        <div class="input-field button">
-          <input type="submit" value="Submit Now" />
-        </div>
-      </form>
+        <!--<center><div id="lottie" style="height: 100px; width: 100px;"></div></center>-->
+        <center><h2>Welcome back!</h2></center>
+
+        <form action="submit">
+          <div class="field email-field">
+            <div class="input-field">
+              <input type="email" placeholder="Enter your username" class="email" />
+            </div>
+            <span class="error email-error">
+              <i class="bx bx-error-circle error-icon"></i>
+              <p class="error-text">Username must be 3-15 characters long and can only contain letters, numbers, and underscores.</p>
+            </span>
+          </div>
+
+          <div class="field create-password">
+            <div class="input-field">
+              <input type="password" placeholder="Enter Password" class="password" />
+              <i class="bx bx-hide show-hide"></i>
+            </div>
+            <span class="error password-error">
+              <i class="bx bx-error-circle error-icon"></i>
+              <p class="error-text">Please enter at least 8 characters with number, symbol, small, and capital letter.</p>
+            </span>
+          </div>
+
+          <div class="input-field button">
+            <input type="submit" value="Login" />
+          </div>
+
+          <div class="line-container">
+            <hr class="line">
+            <p class="or-text">Or Register</p>
+            <hr class="line">
+          </div>
+
+          <h5>Don't have an account? <a href="#" id="reg">Register</a></h5>
+        </form>
+      </div>
+
+      <div class="container" id="registerform" style="display: none; height: 100%; width: 45%;">
+        <center><img src="Images/profile.png" height="100px" width="100px"></center>
+        <header>Signup</header>
+        <form action="submit">
+          <div class="user-details">
+        
+            <div class="input-box">
+              <input type="name" placeholder="FirstName" required>
+            </div>
+  
+            <div class="input-box">
+              <input type="name" placeholder="LastName" required>
+            </div>
+          </div>
+
+          <div class="field email-field">
+            <div class="input-field">
+              <input type="username" placeholder="Enter your username" class="email" />
+            </div>
+            <span class="error username-error">
+              <i class="bx bx-error-circle error-icon"></i>
+              <p class="error-text">Username must be 3-15 characters long and can only contain letters, numbers, and underscores.</p>
+            </span>
+          </div>
+          <div class="field create-password">
+            <div class="input-field">
+              <input
+                type="password"
+                placeholder="Create password"
+                class="password"
+              />
+              <i class="bx bx-hide show-hide"></i>
+            </div>
+            <span class="error password-error">
+              <i class="bx bx-error-circle error-icon"></i>
+              <p class="error-text">
+                Please enter at least 8 characters with number, symbol, small and
+                capital letter.
+              </p>
+            </span>
+          </div>
+          
+        <h5>Already have an account? <a href="#" id="log">Login now</a></h5>
+  
+  
+          <div class="input-field button">
+            <input type="submit" value="Register" />
+          </div>
+        </form>
     </div>
 
-    <!-- JavaScript -->
-    <script src="js/script.js"></script>
-    
-    <script type="module">
-      const form = document.querySelector("form"),
-        emailField = form.querySelector(".email-field"),
-        emailInput = emailField.querySelector(".email"),
-        passField = form.querySelector(".create-password"),
-        passInput = passField.querySelector(".password"),
-        cPassField = form.querySelector(".confirm-password"),
-        cPassInput = cPassField.querySelector(".cPassword");
+    <!-- Form Validation Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
 
-      // Email Validation
-      function checkEmail() {
-        const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-        if (!emailInput.value.match(emailPattern)) {
-          return emailField.classList.add("invalid"); // Add invalid class if email does not match the pattern
-        }
-        emailField.classList.remove("invalid"); // Remove invalid class if it matches
-      }
-
-      // Hide and show password
-      const eyeIcons = document.querySelectorAll(".show-hide");
-
-      eyeIcons.forEach((eyeIcon) => {
-        eyeIcon.addEventListener("click", () => {
-          const pInput = eyeIcon.parentElement.querySelector("input"); // Get parent element of eye icon
-          if (pInput.type === "password") {
-            eyeIcon.classList.replace("bx-hide", "bx-show");
-            return (pInput.type = "text");
+        document.getElementById('reg').addEventListener('click', 
+          function() 
+          {
+            document.getElementById('container').style.display = 'none';
+            document.getElementById('registerform').style.display = 'block';
           }
-          eyeIcon.classList.replace("bx-show", "bx-hide");
-          pInput.type = "password";
-        });
-      });
+        )
 
-      // Password Validation
-      function createPass() {
-        const passPattern =
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!passInput.value.match(passPattern)) {
-          return passField.classList.add("invalid");
-        }
-        passField.classList.remove("invalid");
+        document.getElementById('log').addEventListener('click', 
+          function() 
+          {
+            document.getElementById('container').style.display = 'block';
+            document.getElementById('registerform').style.display = 'none';
+          }
+        )
+
+        const loginForm = document.querySelector("#container form"),
+    loginEmailField = loginForm.querySelector(".email-field"),
+    loginEmailInput = loginEmailField.querySelector(".email"),
+    loginPassField = loginForm.querySelector(".create-password"),
+    loginPassInput = loginPassField.querySelector(".password");
+
+  // For Register Form (registerform)
+  const registerForm = document.querySelector("#registerform form"),
+    registerEmailField = registerForm.querySelector(".email-field"),
+    registerEmailInput = registerEmailField.querySelector(".email"),
+    registerPassField = registerForm.querySelector(".create-password"),
+    registerPassInput = registerPassField.querySelector(".password");
+    /*registerConfirmPassField = registerForm.querySelector(".confirm-password"),
+    registerConfirmPassInput = registerConfirmPassField.querySelector(".cPassword");*/
+
+  // Email Validation
+  function checkEmail(emailInput, emailField) {
+    const usernamePattern = /^[a-zA-Z0-9_]{3,15}$/;
+if (!emailInput.value.match(usernamePattern)) {
+  return emailField.classList.add("invalid");
+}
+emailField.classList.remove("invalid");
+
+  }
+
+  // Password Validation
+  function checkPassword(passInput, passField) {
+    const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passInput.value.match(passPattern)) {
+      return passField.classList.add("invalid");
+    }
+    passField.classList.remove("invalid");
+  }
+
+  // Confirm Password Validation
+  function checkConfirmPassword(passInput, confirmPassInput, confirmPassField) {
+    if (passInput.value !== confirmPassInput.value) {
+      return confirmPassField.classList.add("invalid");
+    }
+    confirmPassField.classList.remove("invalid");
+  }
+
+  // Hide and show password
+  const eyeIcons = document.querySelectorAll(".show-hide");
+  eyeIcons.forEach((eyeIcon) => {
+    eyeIcon.addEventListener("click", () => {
+      const pInput = eyeIcon.parentElement.querySelector("input");
+      if (pInput.type === "password") {
+        eyeIcon.classList.replace("bx-hide", "bx-show");
+        return (pInput.type = "text");
       }
+      eyeIcon.classList.replace("bx-show", "bx-hide");
+      pInput.type = "password";
+    });
+  });
 
-      // Confirm Password Validation
-      function confirmPass() {
-        if (passInput.value !== cPassInput.value || cPassInput.value === "") {
-          return cPassField.classList.add("invalid");
-        }
-        cPassField.classList.remove("invalid");
-      }
+  // Form validation for Login
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault(); // Prevent form submission
+    checkEmail(loginEmailInput, loginEmailField);
+    checkPassword(loginPassInput, loginPassField);
 
-      // Calling function on form submit
-      form.addEventListener("submit", (e) => {
-        e.preventDefault(); // Preventing form submission
-        checkEmail();
-        createPass();
-        confirmPass();
+    if (!loginEmailField.classList.contains("invalid") && !loginPassField.classList.contains("invalid")) {
+      location.href = loginForm.getAttribute("action"); // Simulate form submission
+    }
+  });
 
-        // Call functions on key up
-        emailInput.addEventListener("keyup", checkEmail);
-        passInput.addEventListener("keyup", createPass);
-        cPassInput.addEventListener("keyup", confirmPass);
+  // Form validation for Register
+  registerForm.addEventListener("submit", (e) => {
+    e.preventDefault(); // Prevent form submission
+    checkEmail(registerEmailInput, registerEmailField);
+    checkPassword(registerPassInput, registerPassField);
+    /*checkConfirmPassword(registerPassInput, registerConfirmPassInput, registerConfirmPassField);*/
 
-        if (
-          !emailField.classList.contains("invalid") &&
-          !passField.classList.contains("invalid") &&
-          !cPassField.classList.contains("invalid")
-        ) {
-          location.href = form.getAttribute("action");
-        }
-      });
+    if (!registerEmailField.classList.contains("invalid") && 
+        !registerPassField.classList.contains("invalid") && 
+        !registerConfirmPassField.classList.contains("invalid")) {
+      location.href = registerForm.getAttribute("action"); // Simulate form submission
+    }
+  });
+
+  // Add real-time validation on keyup
+  loginEmailInput.addEventListener("keyup", () => checkEmail(loginEmailInput, loginEmailField));
+  loginPassInput.addEventListener("keyup", () => checkPassword(loginPassInput, loginPassField));
+
+  registerEmailInput.addEventListener("keyup", () => checkEmail(registerEmailInput, registerEmailField));
+  registerPassInput.addEventListener("keyup", () => checkPassword(registerPassInput, registerPassField));
+  registerConfirmPassInput.addEventListener("keyup", () => checkConfirmPassword(registerPassInput, registerConfirmPassInput, registerConfirmPassField));
+
+});
     </script>
   </body>
 </html>

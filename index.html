@@ -36,7 +36,7 @@ var bar = "";
         document.getElementById('chart').innerHTML = "";
         var options = {
             chart: {
-                height: 350,
+                height: 150,
                 type: 'radialBar'
             },
             series: [data],
@@ -53,7 +53,7 @@ var bar = "";
                         },
                         value: {
                             color: '#111',
-                            fontSize: '20px',
+                            fontSize: '18px',
                             show: true,
                             offsetY: 10,
                             style: {
@@ -466,18 +466,50 @@ function detectDeviceType() {
        
     <div class="horizontal" id="container">
         <div id="left">
-            <br>
-            <br>
+            
+            <h4 style="color: white; margin-left: 15px; margin-bottom: 10px; margin-right: 10px;">Location</h4>
             <div class="horizontal" style="align-items: center; vertical-align: middle;">
                 
-            <div id="dropbox" onclick="toggleDropdown()" class="horizontal left_box" style="margin-bottom: -30px; border: 2px solid #E4F1FF; border-radius: 10px; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; width: 80%;">
+            <!--<div id="dropbox" onclick="toggleDropdown()" class="horizontal left_box" style="margin-bottom: -30px; border: 2px solid #E4F1FF; border-radius: 10px; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; width: 80%;">
                 <h4 class="icon" style="margin: 0; margin-right: 15px;">near_me</h4>
                 <h4 id="location" class="left_label" style="margin: 0;">Mumbai, India</h4>
                 <h4 class="icon" style="margin: 0; margin-right: 15px; margin-left: auto;">arrow_drop_down</h4>
+            </div>-->
+                <div class="select-box horizontal" style="width: 40%;">
+                <!--<h4 class="icon" style="margin: 0; margin-right: 15px;">near_me</h4>-->
+                <select>
+                  <option hidden>Country</option>
+                  <option>Rain</option>
+                  <option>Breeze</option>
+                  <option>Snow</option>
+                </select>
+                </div>
+
+                <div class="select-box horizontal" style="width: 35%;">
+                    <!--<h4 class="icon" style="margin: 0; margin-right: 15px;">near_me</h4>-->
+                    <select>
+                      <option hidden>City</option>
+                      <option>Rain</option>
+                      <option>Breeze</option>
+                      <option>Snow</option>
+                    </select>
+                </div>
             </div>
         
+            <h4 style="color: white; margin-left: 15px; margin-bottom: 10px; margin-right: 10px;">Select Date</h4>
+            <div class="horizontal" style="align-items: center; vertical-align: middle;">
+                <div class="select-box horizontal" style="width: 80%;">
+                    <h4 class="icon" style="margin: 0; margin-right: 15px;">calendar_month</h4>
+                    <select>
+                      <option hidden>Date</option>
+                      <option>Rain</option>
+                      <option>Breeze</option>
+                      <option>Snow</option>
+                    </select>
+                </div>
+            </div>
 
-            <div id="dropdown" class="dropdown">
+          <!--  <div id="dropdown" class="dropdown">
                 <div id="dropdown-content" class="dropdown-content">
                   <input type="text" id="searchInput" onkeyup="filterFunction()" placeholder="Search for countries..">
                   <div id="countryList"></div>
@@ -486,15 +518,10 @@ function detectDeviceType() {
                   <input type="text" id="citysearchInput" onkeyup="filterCities()" placeholder="Search for cities..">
                   <div id="cityList"></div>
                 </div>
-            </div>
-            </div>
+            </div>-->
 
-            <br>
-
-            <div class="left_box"> <h5 id="today" class="left_label light">28 Sept</h4></div>
-            <br>
-            <br>
-
+            <div class="left_box" style="margin-bottom: -45px; display: none;"> <h5 id="today" class="left_label light">28 Sept</h4></div>
+          
             <div>
             <h1 style="margin-left: auto; margin-right: auto; width: 100%; text-align: center; margin-bottom: 10px;" id="temp">31 °</h1>
             <div class="horizontal">
@@ -503,29 +530,22 @@ function detectDeviceType() {
             </div>
         </div>
             <div style="width: 100%;">
-                <!--   <br>
                 
-                <img height="200px" width="200px" id="icon" alt="Weather Icon">
-                <br>
-                <br>
-            -->
             <br>
                 <img id="cloud1" class="cloudright" src="Images\cloud.png" alt="Cloud Image">
-                <br>
+                
                 <img id="cloud2" class="cloudleft" src="Images\cloud.png" alt="Cloud Image">
-                <br>
+                
                 <img id="cloud3" class="cloudright" src="Images\cloud.png" alt="Cloud Image">
                 <br>
                 <img id="dcloud" class="cloudleft" src="Images\cloud.png" alt="Cloud Image">
             </div> 
 
-
         </div>
-
 
         <div class="top-container" id="ri">
             <button class="icon" id="float" onclick="popup1()">add</button>
-            <div class="card" id="temp-container">
+            <div class="card" id="temp-container" style="padding-top: 10px; padding-bottom: 10px;">
                 <h3>Weather Forecast</h3>
                 <canvas id="temperatureChart" style="width: 100%; height: 20%"></canvas>
             </div>
@@ -557,7 +577,7 @@ function detectDeviceType() {
                             <p class="icon" style="margin: 0;">local_fire_department</p>
                         </div>
                     </div>
-                    <div id="chart"></div>
+                    <div id="chart" style="height: 10%; margin: -15px;"></div>
                     <!--<h3 style="text-align: center;" id="speed"><b>82%</b></h3>-->
 
                 </div>

@@ -13,9 +13,23 @@ body {
   align-items: center;
   justify-content: center;
   /*background: #4070f4;*/
-  background-image: url('Images/view.jpg'); 
+  background-image: url('Images/cloudy.jpg'); 
   background-size: cover;
   background-position: center;
+}
+
+.horizontal
+{
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
+
+.round
+{
+  border-radius: 20px;
+  padding: 10px 50px;
+
 }
 
 .line {
@@ -40,14 +54,128 @@ body {
   margin: 0 10px;
 }
 
+.content form .user-details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 20px 0 12px 0;
+}
+
+form .user-details .input-box {
+  margin-bottom: 15px;
+  width: 50%;
+
+}
+
+.user-details
+{
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  align-content: center;
+}
+
+form .input-box span.details {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.user-details :where(.input-box input, .select-box) {
+  height: 45px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 15px;
+  border: 1px solid #ccc;
+  border-bottom-width: 2px;
+  transition: all 0.3s ease;
+}
+
 .container {
   position: relative;
-  max-width: 370px;
-  width: 100%;
+  width: 40%;
   padding: 25px;
   border-radius: 8px;
   background-color: #fff;
+  margin: 0;
+  margin-left: auto;
 }
+
+@keyframes moveX {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(20px); } /* Move 20px to the right */
+  100% { transform: translateX(0); }
+}
+
+#cloud1 {
+  position: absolute;
+  left: 50px;
+  top: 150px;
+  animation: moveX 5s ease-in-out infinite; /* Moving on x-axis */
+}
+
+#cloud2 {
+  position: absolute;
+  left: 300px;
+  top: 250px;
+  animation: moveX 6s ease-in-out infinite; /* Different speed */
+}
+
+#cloud3 {
+  position: absolute;
+  left: 50px;
+  top: 350px;
+  animation: moveX 4s ease-in-out infinite; /* Different speed */
+}
+
+#dcloud {
+  position: absolute;
+  left: 300px;
+  top: 450px;
+  animation: moveX 7s ease-in-out infinite; /* Different speed */
+}
+
+#lottie {
+  width: 100px;
+  height: 100px;
+  background-color: #ffffff; /* Starting background color */
+  transition: background-color 0.5s ease; /* Transition timing */
+}
+
+.morph-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#morphing-text {
+  font-size: 3rem;
+  transition: all 0.5s ease;
+}
+
+.morph {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.morph-back {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+
+form .text h5 a{
+  color: #4070f4;
+  text-decoration: none;
+}
+form .text h5 a:hover{
+  text-decoration: underline;
+}
+
 .container header {
   font-size: 22px;
   font-weight: 600;
@@ -117,6 +245,9 @@ form .input-field {
   background-color: #4070f4;
   cursor: pointer;
   transition: all 0.3s ease;
+  height: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .button input:hover {
   background-color: #0e4bf1;

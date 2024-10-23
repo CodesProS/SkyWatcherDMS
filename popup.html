@@ -7,49 +7,97 @@
   <link rel="stylesheet" href="pop.css">
 </head>
 <body>
+
   <div class="container">
-    <!-- Title section -->
     <div class="title">Submit</div>
     <div class="content">
-      <!-- Registration form -->
       <form action="#">
         <div class="user-details">
         
-          <div class="input-box">
+          <div class="input-box" id="temp">
             <span class="details">Temperature (C)</span>
             <input type="number" placeholder="Temp" required>
           </div>
 
-          <div class="input-box">
+          <div class="input-box" id="humid">
             <span class="details">Humidity</span>
             <input type="number" placeholder="Humidity" required>
           </div>
 
-          <div class="input-box">
+          <div class="input-box" id="windspeed">
             <span class="details">Wind Speed</span>
             <input type="number" placeholder="Wind Speed" required>
           </div>
 
-          <div class="input-box">
+          <div class="input-box" id="countryname">
+            <span class="details">Country Name</span>
+            <input type="number" placeholder="Country Name" required>
+          </div>
+
+          <div class="input-box" id="latitude">
+            <span class="details">Latitude</span>
+            <input type="number" placeholder="Latitutde" required>
+          </div>
+
+          <div class="input-box" id="longitude">
+            <span class="details">Longitude</span>
+            <input type="number" placeholder="Longitude" required>
+          </div>
+
+          <div class="input-box" id="countryid">
+            <span class="details">CountryID</span>
+            <input type="number" placeholder="Country ID" required>
+          </div>
+
+          <div class="input-box" id="state">
+            <span class="details">State</span>
+            <input type="number" placeholder="State" required>
+          </div>
+
+          <div class="input-box" id="cityname">
+            <span class="details">City Name</span>
+            <input type="number" placeholder="City Name" required>
+          </div>
+
+          <div class="input-box" id="cloud">
             <span class="details">Cloudiness %</span>
             <input type="number" placeholder="Cloudiness %" required>
           </div>
 
-          <div class="input-box">
+          <div class="input-box" id="visible">
             <span class="details">Visibility</span>
             <input type="number" placeholder="Visibility" required>
           </div>
 
-          <div class="input-box">
+          <div class="input-box" id="pressure">
             <span class="details">Atmospheric Pressure</span>
             <input type="number" placeholder="Atmospheric Pressure" required>
           </div>
-          
+
+          <div class="input-box" id="cityid">
+            <span class="details">CityID</span>
+            <input type="number" placeholder="CityID" required>
+          </div>
+
+          <div class="input-box" id="conditionid">
+            <span class="details">ConditionID</span>
+            <input type="number" placeholder="ConditionID" required>
+          </div>
+
+          <div class="input-box" id="weatherid">
+            <span class="details">WeatherID</span>
+            <input type="number" placeholder="WeatherID" required>
+          </div>
+
+          <div class="input-box" id="date">
+            <span class="details">Date</span>
+            <input type="date" placeholder="" required>
+          </div>
           
         </div>
 
         <div style="display: flex; gap: 50px;">
-        <div class="select-box">
+        <div class="select-box" id="conditiontype">
             <select>
               <option hidden>Condition Type</option>
               <option>Rain</option>
@@ -58,7 +106,7 @@
             </select>
           </div>
 
-          <div class="select-box">
+          <div class="select-box" id="alerttype">
             <select>
               <option hidden>Alert Type</option>
               <option>Flood</option>
@@ -70,7 +118,7 @@
         <br>
 
         <div class="conditions">
-            <div class="input-box">
+            <div class="input-box" id="conditionexp">
                 <span class="details">Condition Explanation</span>
                 <input type="text" placeholder="Summary" required>
               </div>
@@ -78,47 +126,236 @@
 
         <br>
         <div class="conditions">
-            <div class="input-box">
+            <div class="input-box" id="alertdesc">
                 <span class="details">Alert description</span>
                 <input type="text" placeholder="Description of Alert" required>
               </div>
         </div>
 
-
-
         <br>
         
         <div class="gender-details">
-           
-            <input type="radio" name="gender" id="dot-1">
-            <input type="radio" name="gender" id="dot-2">
-            <input type="radio" name="gender" id="dot-3">
+            <input type="radio" name="insertType" id="dot-1" value="Weather Details">
+            <input type="radio" name="insertType" id="dot-2" value="Forecast">
+            <input type="radio" name="insertType" id="dot-3" value="Alerts">
+            <input type="radio" name="insertType" id="dot-4" value="Conditions">
+            <input type="radio" name="insertType" id="dot-5" value="Weather Records">
+            <input type="radio" name="insertType" id="dot-6" value="Country">
+            <input type="radio" name="insertType" id="dot-7" value="City">
             <span class="gender-title">Insert Type</span>
             <div class="category">
-             
               <label for="dot-1">
                 <span class="dot one"></span>
-                <span class="gender">Weather</span>
+                <span class="gender">Weather Details</span>
               </label>
-             
               <label for="dot-2">
                 <span class="dot two"></span>
                 <span class="gender">Forecast</span>
               </label>
-             
               <label for="dot-3">
                 <span class="dot three"></span>
                 <span class="gender">Alerts</span>
               </label>
+              <label for="dot-4">
+                <span class="dot four"></span>
+                <span class="gender">Conditions</span>
+              </label>
+              <label for="dot-5">
+                <span class="dot five"></span>
+                <span class="gender">Weather Records</span>
+              </label>
+              <label for="dot-6">
+                <span class="dot six"></span>
+                <span class="gender">Country</span>
+              </label>
+              <label for="dot-7">
+                <span class="dot seven"></span>
+                <span class="gender">City</span>
+              </label>
             </div>
           </div>
 
-        <!-- Submit button -->
         <div class="button">
           <input type="submit" value="Submit">
         </div>
       </form>
     </div>
   </div>
+
+  <script>
+    // Get all radio buttons with the name 'insertType'
+    const radioButtons = document.querySelectorAll('input[name="insertType"]');
+    var selected = "";
+
+    
+    // Add event listeners to each radio button
+    radioButtons.forEach(radio => {
+      radio.addEventListener('change', function() {
+        document.getElementById('humid').style.display = 'block';
+        document.getElementById('temp').style.display = 'block';
+        document.getElementById('cloud').style.display = 'block';
+        document.getElementById('visible').style.display = 'block';
+        document.getElementById('pressure').style.display = 'block';
+        document.getElementById('cityid').style.display = 'block';
+        document.getElementById('conditionid').style.display = 'block';
+        document.getElementById('weatherid').style.display = 'block';
+        document.getElementById('windspeed').style.display = 'block';
+        document.getElementById('conditionexp').style.display = 'block';
+        document.getElementById('alertdesc').style.display = 'block';
+        document.getElementById('conditiontype').style.display = 'block';
+        document.getElementById('alerttype').style.display = 'block';
+        document.getElementById('date').style.display = 'block';
+        document.getElementById('countryid').style.display = 'block';
+        document.getElementById('cityname').style.display = 'block';
+        document.getElementById('latitude').style.display = 'block';
+        document.getElementById('longitude').style.display = 'block';
+        document.getElementById('state').style.display = 'block';
+        document.getElementById('countryname').style.display = 'block';
+        if (this.checked) {
+          selected = this.value;
+          console.log(selected == "Weather Details");
+          if(selected == "Weather Details")
+          {
+            document.getElementById('conditionexp').style.display = 'none';
+            document.getElementById('alertdesc').style.display = 'none';
+            document.getElementById('conditiontype').style.display = 'none';
+            document.getElementById('alerttype').style.display = 'none';
+            document.getElementById('date').style.display = 'none';
+            document.getElementById('countryid').style.display = 'none';
+        document.getElementById('cityname').style.display = 'none';
+        document.getElementById('latitude').style.display = 'none';
+        document.getElementById('longitude').style.display = 'none';
+        document.getElementById('state').style.display = 'none';
+        document.getElementById('countryname').style.display = 'none';
+        document.getElementById('cityid').style.display = 'none';
+        document.getElementById('conditionid').style.display = 'none';
+        document.getElementById('weatherid').style.display = 'none';
+          }
+          else if(selected == "Conditions")
+          {
+            document.getElementById('humid').style.display = 'none';
+        document.getElementById('temp').style.display = 'none';
+        document.getElementById('cloud').style.display = 'none';
+        document.getElementById('visible').style.display = 'none';
+        document.getElementById('pressure').style.display = 'none';
+        document.getElementById('cityid').style.display = 'none';
+        document.getElementById('conditionid').style.display = 'none';
+        document.getElementById('weatherid').style.display = 'none';
+        document.getElementById('windspeed').style.display = 'none';
+        document.getElementById('alerttype').style.display = 'none';
+        document.getElementById('alertdesc').style.display = 'none';
+        document.getElementById('date').style.display = 'none';
+        document.getElementById('countryid').style.display = 'none';
+        document.getElementById('cityname').style.display = 'none';
+        document.getElementById('latitude').style.display = 'none';
+        document.getElementById('longitude').style.display = 'none';
+        document.getElementById('state').style.display = 'none';
+        document.getElementById('countryname').style.display = 'none';
+          }
+          else if(selected == "Alerts")
+          {
+            document.getElementById('humid').style.display = 'none';
+        document.getElementById('temp').style.display = 'none';
+        document.getElementById('cloud').style.display = 'none';
+        document.getElementById('visible').style.display = 'none';
+        document.getElementById('pressure').style.display = 'none';
+        document.getElementById('cityid').style.display = 'none';
+        document.getElementById('weatherid').style.display = 'none';
+        document.getElementById('windspeed').style.display = 'none';
+        document.getElementById('conditionexp').style.display = 'none';
+        document.getElementById('conditiontype').style.display = 'none';
+        document.getElementById('date').style.display = 'none';
+        document.getElementById('countryid').style.display = 'none';
+        document.getElementById('cityname').style.display = 'none';
+        document.getElementById('latitude').style.display = 'none';
+        document.getElementById('longitude').style.display = 'none';
+        document.getElementById('state').style.display = 'none';
+        document.getElementById('countryname').style.display = 'none';
+          }
+        else if(selected == "Forecast")
+        {
+          document.getElementById('humid').style.display = 'none';
+        document.getElementById('temp').style.display = 'none';
+        document.getElementById('cloud').style.display = 'none';
+        document.getElementById('visible').style.display = 'none';
+        document.getElementById('pressure').style.display = 'none';
+        document.getElementById('alerttype').style.display = 'none';
+        document.getElementById('alertdesc').style.display = 'none';
+        document.getElementById('windspeed').style.display = 'none';
+        document.getElementById('conditionexp').style.display = 'none';
+        document.getElementById('conditiontype').style.display = 'none';
+        document.getElementById('cityid').style.display = 'none';
+        document.getElementById('countryid').style.display = 'none';
+        document.getElementById('cityname').style.display = 'none';
+        document.getElementById('latitude').style.display = 'none';
+        document.getElementById('longitude').style.display = 'none';
+        document.getElementById('state').style.display = 'none';
+        document.getElementById('countryname').style.display = 'none';
+        }
+        else if(selected == "Weather Records")
+        {
+          document.getElementById('humid').style.display = 'none';
+        document.getElementById('temp').style.display = 'none';
+        document.getElementById('cloud').style.display = 'none';
+        document.getElementById('visible').style.display = 'none';
+        document.getElementById('pressure').style.display = 'none';
+        document.getElementById('alerttype').style.display = 'none';
+        document.getElementById('alertdesc').style.display = 'none';
+        document.getElementById('windspeed').style.display = 'none';
+        document.getElementById('conditionexp').style.display = 'none';
+        document.getElementById('conditiontype').style.display = 'none';
+        document.getElementById('conditionid').style.display = 'none';
+        document.getElementById('countryid').style.display = 'none';
+        document.getElementById('cityname').style.display = 'none';
+        document.getElementById('latitude').style.display = 'none';
+        document.getElementById('longitude').style.display = 'none';
+        document.getElementById('state').style.display = 'none';
+        document.getElementById('countryname').style.display = 'none';
+        }
+        else if(selected == "Country")
+        {
+          document.getElementById('humid').style.display = 'none';
+        document.getElementById('temp').style.display = 'none';
+        document.getElementById('cloud').style.display = 'none';
+        document.getElementById('visible').style.display = 'none';
+        document.getElementById('pressure').style.display = 'none';
+        document.getElementById('alerttype').style.display = 'none';
+        document.getElementById('alertdesc').style.display = 'none';
+        document.getElementById('windspeed').style.display = 'none';
+        document.getElementById('conditionexp').style.display = 'none';
+        document.getElementById('conditiontype').style.display = 'none';
+        document.getElementById('cityid').style.display = 'none';
+        document.getElementById('countryid').style.display = 'none';
+        document.getElementById('cityname').style.display = 'none';
+        document.getElementById('state').style.display = 'none';
+        document.getElementById('conditionid').style.display = 'none';
+        document.getElementById('weatherid').style.display = 'none';
+        document.getElementById('date').style.display = 'none';
+        }
+        else if(selected == "City")
+        {
+          document.getElementById('humid').style.display = 'none';
+        document.getElementById('temp').style.display = 'none';
+        document.getElementById('cloud').style.display = 'none';
+        document.getElementById('visible').style.display = 'none';
+        document.getElementById('pressure').style.display = 'none';
+        document.getElementById('alerttype').style.display = 'none';
+        document.getElementById('alertdesc').style.display = 'none';
+        document.getElementById('windspeed').style.display = 'none';
+        document.getElementById('conditionexp').style.display = 'none';
+        document.getElementById('conditiontype').style.display = 'none';
+        document.getElementById('cityid').style.display = 'none';
+        document.getElementById('longitude').style.display = 'none';
+        document.getElementById('countryname').style.display = 'none';
+        document.getElementById('latitude').style.display = 'none';
+        document.getElementById('conditionid').style.display = 'none';
+        document.getElementById('weatherid').style.display = 'none';
+        document.getElementById('date').style.display = 'none';
+        }
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>
