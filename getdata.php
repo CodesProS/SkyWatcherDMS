@@ -35,9 +35,27 @@ if ($action) {
     elseif ($action === 'weatherrec')
     {
         $cityid = intval($_GET['cityid']);
-        $date = $_GET['date'];
-        $sql = "SELECT WeatherID, ForecastID FROM weatherrecords w where w.WDate = $date AND w.CityID = $cityid
-        FULL JOIN forecasts f on f.FDate = w.WDate";
+        $dates = $_GET['dates'];
+        $dates = mysqli_real_escape_string($conn, $dates);
+        $sql = "SELECT w.WeatherID, f.ForescastID FROM weatherrecords w 
+        LEFT JOIN forecasts f ON f.FDate = w.WDate 
+        WHERE w.WDate = '$dates' AND w.CityID = $cityid";
+
+       // $sql = "SELECT ForescastID FROM forecasts f";
+    }
+    elseif ($action == 'weatherdetails')
+    {
+        $weatherid = intval($_GET['weatherid']);
+        $sql = "SELECT w.WeatherID,w.Temperature, w.WindSpeed, w.Humidity, w.Cloudiness, w.Visibility, w.Pressure, c.ConditionType, c.Summary, c.iconcode
+        FROM weatherdetails w
+        LEFT JOIN conditions c on c.ConditionID = w.ConditionID
+        WHERE w.WeatherID = $weatherid 
+        ";
+    }
+    elseif ($action == 'forecasts')
+    {
+        $forecastid = intval($_GET['forecastid']);
+        $sql = "SELECT * from forecasts where ForescastID = $forecastid";
     }
     else {
         echo json_encode(["error" => "Invalid action."]);
