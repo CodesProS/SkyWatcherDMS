@@ -30,20 +30,31 @@ if ($action) {
     elseif ($action === 'date')
     {
         $cityid = intval($_GET['cityid']);
-        $sql = "SELECT FDate AS CDate FROM forecasts WHERE CityID = $cityid UNION SELECT WDate AS CDate FROM weatherrecords WHERE CityID = $cityid";
+        $sql = "SELECT DISTINCT FDate AS CDate FROM forecasts WHERE CityID = $cityid";
     } 
     elseif ($action === 'weatherrec')
     {
         $cityid = intval($_GET['cityid']);
         $dates = $_GET['dates'];
         $dates = mysqli_real_escape_string($conn, $dates);
-        $sql = "SELECT w.WeatherID, f.ForescastID FROM weatherrecords w 
-        LEFT JOIN forecasts f ON f.FDate = w.WDate 
-        WHERE w.WDate = '$dates' AND w.CityID = $cityid";
-
-       // $sql = "SELECT ForescastID FROM forecasts f";
+        $sql = "SELECT f.ForescastID, f.WeatherID, f.Time, w.Temperature, w.WindSpeed, w.Humidity, w.Cloudiness, w.Visibility, w.Pressure, c.ConditionType, c.Summary, c.iconcode  FROM forecasts f 
+        INNER JOIN weatherdetails w on w.WeatherID = f.WeatherID
+        INNER JOIN conditions c on c.ConditionID = w.ConditionID
+        WHERE f.FDate = '$dates' AND f.CityID = $cityid";
     }
-    elseif ($action == 'weatherdetails')
+    elseif ($action === 'averagedata')
+    {
+        $cityid = intval($_GET['cityid']);
+        $dates = $_GET['dates'];
+        $dates = mysqli_real_escape_string($conn, $dates);
+        $sql = "SELECT AVG(w.Temperature) as Avgtemp, AVG(w.WindSpeed) as Avgwind, AVG(w.Humidity) as Avghumid, AVG(w.Cloudiness) as Avgcloud, AVG(w.Visibility) as Avgvis, AVG(w.Pressure) as Avgpress
+        FROM forecasts f 
+        INNER JOIN weatherdetails w on w.WeatherID = f.WeatherID
+        WHERE f.FDate = '$dates' AND f.CityID = $cityid
+        GROUP BY f.FDate
+        ";
+    }
+    /*elseif ($action == 'weatherdetails')
     {
         $weatherid = intval($_GET['weatherid']);
         $sql = "SELECT w.WeatherID,w.Temperature, w.WindSpeed, w.Humidity, w.Cloudiness, w.Visibility, w.Pressure, c.ConditionType, c.Summary, c.iconcode
@@ -56,7 +67,7 @@ if ($action) {
     {
         $forecastid = intval($_GET['forecastid']);
         $sql = "SELECT * from forecasts where ForescastID = $forecastid";
-    }
+    }*/
     else {
         echo json_encode(["error" => "Invalid action."]);
         exit();
