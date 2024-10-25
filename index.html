@@ -21,6 +21,17 @@
 var city = 'Mumbai';
 var bar = "";
        document.addEventListener('DOMContentLoaded', function() {
+const queryString = window.location.search;
+
+const urlParams = new URLSearchParams(queryString);
+
+const admin = urlParams.get('admin');
+const user = urlParams.get('user');
+
+if (admin === 'no') {
+    document.getElementById('float').style.display = "none";
+}
+console.log(admin);
 
     const deviceType = detectDeviceType();
         if(deviceType == "Mobile")
@@ -32,7 +43,283 @@ var bar = "";
         }
         console.log(deviceType);
 
-    function createring(data) {
+    /*
+    */
+    document.getElementById('countryselect').addEventListener('change', function() {
+        const selected = countrydata.find(country => country.CountryName === this.value);
+        countryid = selected.CountryID;
+        console.log("Selected ",countryid);
+        getCities();
+    });
+
+    document.getElementById('cityselect').addEventListener('change', function() {
+        const selected = citydata.find(city => city.CityName === this.value);
+        cityid = selected.CityID;
+        console.log("Selected ",cityid);
+        getDate();
+    });
+
+    document.getElementById('dateselect').addEventListener('change', function() {
+        datea = this.value;
+        console.log(typeof(datea));
+        getRecordsThroughDate();
+    });
+});
+
+var scountry = "India";
+var countryid = 1;
+var cityid = 1;
+var datea = "";
+var weatherid = 1;
+var forecastid = 1;
+var temperature = 25;
+var humidity = 87;
+var cloudiness = 100;
+var visibility = 100;
+var windspeed = 20;
+var pressure = 10;
+var iconCode = 0;
+var destype = "Clear Weather";
+
+var countrydata = [];
+var citydata = [];
+var weatherdata = [];
+var forecastdata = [];
+var dates = [];
+var weatherrecords = [];
+var records = [];
+
+function getRecordsThroughDate()
+{
+    fetch(`getdata.php?action=${"weatherrec"}&cityid=${cityid}&dates=${datea}`)
+    .then(response => response.json()) 
+    .then(data => {
+        console.log("Records ",data);  
+        forecastdata = data;
+        //weatherid = data[0].WeatherID;
+        console.log("Wetaher id ", weatherid);
+        forecastid = data[0].ForescastID;
+        getWeatherDetails("Weather", weatherid);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function getWeatherDetails(type, id)
+{
+    //console.log(weatherid);
+    fetch(`getdata.php?action=${"weatherdetails"}&weatherid=${id}`)
+    .then(response => response.json()) 
+    .then(data => {
+        console.log(data);
+        weatherdata = data; 
+        humidity = data[0].Humidity;
+        temperature = data[0].Temperature;
+        pressure = data[0].Pressure;
+        cloudiness = data[0].Cloudiness;
+        visibility = data[0].Visibility;
+        windspeed = data[0].WindSpeed; 
+        iconCode = parseInt(data[0].iconcode);
+        destype = data[0].ConditionType;
+        if(type === "Weather")
+    {
+        getForecast();
+        displayWeather();
+    }
+    else 
+    {
+        if(bar == "")
+            createbar(humidity, windspeed, cloudiness, temperature, visibility);
+        else
+        {
+            bar.data.datasets[0].data = [humidity, windspeed, cloudiness, temperature, visibility];
+            bar.update();
+        }
+    }
+
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function getForecast()
+{
+    //console.log(weatherid);
+    fetch(`getdata.php?action=${"forecasts"}&forecastid=${forecastid}`)
+    .then(response => response.json()) 
+    .then(data => {
+        console.log(data);
+        forecastdata = data;
+        getWeatherDetails("Forecast",data[0].WeatherID);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function getDate()
+{
+    fetch(`getdata.php?action=${"date"}&cityid=${cityid}`)
+    .then(response => response.json()) 
+    .then(data => {
+        console.log(data);  
+        
+        const selectElement = document.getElementById('dateselect');
+        selectElement.innerHTML = '<option hidden>Date</option>';
+
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.CDate;  
+            option.textContent = item.CDate; 
+            selectElement.appendChild(option);
+        });
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function getCountries()
+    {
+        console.log("Getcountr");
+fetch(`getdata.php?action=${"country"}`)
+    .then(response => response.json())  // Parse the response to JSON
+    .then(data => {
+        console.log(data);  // Log the actual data, not the Promise
+        countrydata = data;
+        
+        const selectElement = document.getElementById('countryselect');
+        selectElement.innerHTML = '<option hidden>Country</option>';
+
+        // Populate the select element with the data
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.CountryName;  // Assuming 'id' is a unique identifier
+            option.textContent = item.CountryName;  // Assuming 'name' is the display text
+            selectElement.appendChild(option);
+        });
+    })
+    .catch(error => console.error('Error:', error));  // Log any errors
+    }
+
+    function getCities()
+    {
+    fetch(`getdata.php?action=${"city"}&countryid=${countryid}`)
+    .then(response => response.json())  
+    .then(data => {
+        console.log(data);  
+        citydata = data;
+        const selectElement = document.getElementById('cityselect');
+        selectElement.innerHTML = '<option hidden>City</option>';
+
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.CityName;  // Assuming 'id' is a unique identifier
+            option.textContent = item.CityName;  // Assuming 'name' is the display text
+            selectElement.appendChild(option);
+        });
+    })
+    .catch(error => console.error('Error:', error));  
+    }
+
+    function displayWeather() {
+        //const temperature = (data.main.temp - 273.15).toFixed(1);
+
+        //const timestamp = data.dt * 1000;
+        //const timezoneOffset = data.timezone * 1000;
+        //const localDate = new Date(timestamp + timezoneOffset);
+
+        //const options = { day: 'numeric', month: 'long' };
+        //const formattedDate = localDate.toLocaleDateString('en-US', options);
+        //document.getElementById('today').innerHTML = (formattedDate != "Invalid Date") ? formattedDate : "";
+        
+        createring(humidity);
+        document.getElementById("temp").innerHTML = temperature + " °C";
+        document.getElementById("vis").innerHTML = visibility + " m";
+        document.getElementById("feels").innerHTML = temperature + " °C";
+
+        document.getElementById('pcloud').style.width = (cloudiness) + '%';
+        document.getElementById('feelsli').style.width = temperature * 2 + "%";
+        document.getElementById('wspeed').innerHTML = windspeed + " m/s";
+        document.getElementById('cloudiness').innerHTML = cloudiness + "%";
+        document.getElementById('pressure').innerHTML = pressure + " hPa";
+
+        document.getElementById('wi').innerHTML = destype;
+
+        if(bar == "")
+            createbar(humidity, windspeed, cloudiness, temperature, visibility);
+        else
+        {
+            bar.data.datasets[0].data = [humidity, windspeed, cloudiness, temperature, visibility];
+            bar.update();
+        }
+
+        var icon = "";
+        document.getElementById('dcloud').style.display = "none";
+        document.getElementById('cloud1').style.display = "block";
+        document.getElementById('cloud2').style.display = "block";
+        document.getElementById('cloud3').style.display = "block";
+        console.log("Iconcode ",iconCode, (iconCode == 0));
+        switch (true) {
+        case (iconCode == 5): //Lightning
+            icon = "Images/lightning-bolt-.png";
+            break;
+        case (iconCode == 4): //Drizzle
+            icon = "Images/drizzle.png";
+            break;
+        case (iconCode == 3): //Rain
+            icon = "Images/storm.png";
+            break;
+        case (iconCode == 2): //Snow
+            icon = "Images/snow.png";
+            break;
+        case (iconCode == 1): //Breeze
+            icon = "Images/tree.png";
+            break;
+        case (iconCode == 6): //None
+            icon = "";
+            break;
+        case (iconCode === 0):
+            icon = "Images/cloud.png";
+            document.getElementById('dcloud').style.display = "block";
+            break;
+        default:
+            icon = "";
+    }
+    console.log("Icon ",icon)
+        
+        document.querySelectorAll('.cloudright').forEach(element => {
+        element.src = icon;
+        if(icon == "")
+        {
+            element.style.display = "none";
+        }
+        else
+        {
+        if(icon != "Images/cloud.png") {
+            element.style.height = "80px";
+            element.style.width = "80px";
+        }
+        else {
+            element.style.height = "48px";
+            element.style.width = "150px";
+        }}
+        });
+
+        document.querySelectorAll('.cloudleft').forEach(element => {
+        element.src = icon;
+        if(icon == "")
+        {
+            element.style.display = "none";
+        }
+        else
+        {
+        if(icon != "Images/cloud.png") {
+            element.style.height = "80px";
+            element.style.width = "80px";
+        }
+        else {
+            element.style.height = "48px";
+            element.style.width = "150px";
+        }}
+        });
+        }
+
+        function createring(data) {
         document.getElementById('chart').innerHTML = "";
         var options = {
             chart: {
@@ -68,6 +355,67 @@ var bar = "";
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
+    }
+
+    function createline()
+    {
+        document.getElementById('linechart').innerHTML = "";
+        var linechart = document.getElementById('linechart').getContext('2d');
+        var temperatureline = new Chart(linechart, {
+        type: 'line',
+        data: {
+            labels: ['Now', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
+            datasets: [
+            {
+                    label: 'Temperature (°C)',
+                    data: [22, 24, 23, 25, 26, 27, 26],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                }/*,
+                {
+                    label: 'Cloudiness (%)',
+                    data: [50, 60, 55, 65, 70, 75, 80],
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Wind Speed (km/h)',
+                    data: [10, 12, 11, 14, 13, 15, 14],
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Visibility (km)',
+                    data: [10, 9.5, 9, 8.8, 8.5, 8, 7.8],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Atmospheric Pressure (hPa)',
+                    data: [1012, 1010, 1008, 1009, 1007, 1005, 1006],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                }*/
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
     }
 
     function createbar(h, w, c, t, v)
@@ -120,326 +468,27 @@ var bar = "";
 bar = comparisonChart;
     }
 
-    /*
-    var temperatureChart = new Chart(ctxTemperature, {
-        type: 'line',
-        data: {
-            labels: ['Now', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
-            datasets: [{
-                label: 'Temperature (°C)',
-                data: weatherData.temperature,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
-            }
-        }
-    });*/
-
-    const apiKey = '8a548b351297cf62646667f93bddb05b';
-
-    async function getWeather() {
-        try {
-            console.log(city);
-            var url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            displayWeather(data);
-            console.log(data);
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-        }
-    }
-
-    function displayWeather(data) {
-        const temperature = (data.main.temp - 273.15).toFixed(1);
-        const humidity = data.main.humidity;
-        const des = data.weather[0].description;
-        const pres = data.main.pressure;
-
-        const timestamp = data.dt * 1000;
-        const timezoneOffset = data.timezone * 1000;
-        const localDate = new Date(timestamp + timezoneOffset);
-
-        const options = { day: 'numeric', month: 'long' };
-        const formattedDate = localDate.toLocaleDateString('en-US', options);
-        document.getElementById('today').innerHTML = (formattedDate != "Invalid Date") ? formattedDate : "";
-        console.log(formattedDate);
-
-        createring(humidity);
-        document.getElementById("temp").innerHTML = temperature + " °C";
-        document.getElementById("vis").innerHTML = data.visibility + " m";
-        document.getElementById("feels").innerHTML = (data.main.feels_like - 273.15).toFixed(1) + " °C";
-
-        document.getElementById('pcloud').style.width = (data.clouds.all) + '%';
-        document.getElementById('feelsli').style.width = (data.main.feels_like - 273.15).toFixed(1) * 2 + "%";
-        document.getElementById('wspeed').innerHTML = data.wind.speed + " m/s";
-        document.getElementById('cloudiness').innerHTML = data.clouds.all + "%";
-        document.getElementById('pressure').innerHTML = (pres) + " hPa";
-        console.log("h y");
-
-        document.getElementById('wi').innerHTML = des.charAt(0).toUpperCase() + des.slice(1);
-
-        if(bar == "")
-            createbar(humidity, data.wind.speed, data.clouds.all, temperature, data.visibility);
-        else
-        {
-            bar.data.datasets[0].data = [humidity, data.wind.speed, data.clouds.all, temperature, data.visibility];
-            bar.update();
-        }
-
-        //updateCityDateTime();
-        const iconCode = data.weather[0].id;
-        console.log("code " + iconCode);
-        var icon = "";
-        document.getElementById('dcloud').style.display = "none";
-        document.getElementById('cloud1').style.display = "block";
-        document.getElementById('cloud2').style.display = "block";
-        document.getElementById('cloud3').style.display = "block";
-        switch (true) {
-        case (iconCode >= 200 && iconCode < 300):
-            icon = "Images/lightning-bolt-.png";
-            break;
-        case (iconCode >= 300 && iconCode < 400):
-            icon = "Images/drizzle.png";
-            break;
-        case (iconCode >= 500 && iconCode < 600):
-            icon = "Images/storm.png";
-            break;
-        case (iconCode >= 600 && iconCode < 700):
-            icon = "Images/snow.png";
-            break;
-        case (iconCode >= 700 && iconCode < 800):
-            icon = "Images/tree.png";
-            break;
-        case (iconCode === 800):
-            icon = "";
-            break;
-        case (iconCode >= 801 && iconCode < 900):
-            icon = "Images/cloud.png";
-            document.getElementById('dcloud').style.display = "block";
-            break;
-        default:
-            icon = "";
-    }
-        
-        document.querySelectorAll('.cloudright').forEach(element => {
-        element.src = icon;
-        if(icon == "")
-        {
-            element.style.display = "none";
-        }
-        else
-        {
-        if(icon != "Images/cloud.png") {
-            element.style.height = "100px";
-            element.style.width = "100px";
-        }
-        else {
-            element.style.height = "48px";
-            element.style.width = "150px";
-        }}
-        });
-
-        document.querySelectorAll('.cloudleft').forEach(element => {
-        element.src = icon;
-        if(icon == "")
-        {
-            element.style.display = "none";
-        }
-        else
-        {
-        if(icon != "Images/cloud.png") {
-            element.style.height = "100px";
-            element.style.width = "100px";
-        }
-        else {
-            element.style.height = "48px";
-            element.style.width = "150px";
-        }}
-        });
-        }
-
-    window.getWeather = getWeather;
-
-    getWeather();
-});
-
-let countries = [];
-let cities = [];
-let ids = [];
-
-var timezone = "Asia/Kolkata";
-
-var headers = new Headers();
-headers.append("X-CSCAPI-KEY", "Wmc5d2lTaWM1dGNyZ1NNVnU4VzU5VjdGek4zZUJ5dEZIbk9Ca3k3cg==");
-
-var requestOptions = {
-    method: 'GET',
-    headers: headers,
-    redirect: 'follow'
-};
-
-function fetchCountries() {
-    fetch("https://api.countrystatecity.in/v1/countries", requestOptions)
-        .then(response => response.json())
-        .then(data => {
-            countries = data.map(item => item.name) || [];
-            ids = data.map(item => item.iso2) || [];
-            console.log(ids);
-            console.log('Countries:', countries);
-            displayCountries(countries);
-        })
-        .catch(error => {
-            console.error('Error fetching countries:', error);
-        });
-}
-
-function fetchCities(countryCode) {
-    fetch(`https://api.countrystatecity.in/v1/countries/${countryCode}/cities`, requestOptions)
-        .then(response => response.json())
-        .then(data => {
-            cities = data.map(item => item.name) || [];
-            console.log(cities);
-            displayCities(cities);
-        })
-        .catch(error => {
-            console.error('Error fetching cities:', error);
-        });
-}
-
-function displayCountries(countries) {
-    document.getElementById('dropdown-content').style.display = "block";
-    const countryList = document.getElementById("countryList");
-    countryList.innerHTML = '';
-    countries.forEach(country => {
-        const countryDiv = document.createElement("div");
-        countryDiv.textContent = country;
-        countryDiv.className = 'country-item';
-        countryDiv.style.width = "100%";
-        countryDiv.onclick = () => selectCountry(country);
-        countryList.appendChild(countryDiv);
-    });
-}
-
-function selectCountry(countryName) {
-    document.getElementById("searchInput").value = countryName;
-    document.getElementById("dropdown-content").style.display = "none";
-    document.getElementById("citydropdown-content").style.display = "block";
-    const countryCode = getCountryCodeByName(countryName);
-    console.log(countryCode);
-    scountry = countryName;
-    fetchCities(countryCode);
-}
-
-function getCountryCodeByName(countryName) {
-    var index = countries.indexOf(countryName);
-    return ids[index];
-}
-
-function popup2()
+    function popup1()
 {
-    document.getElementById("pcontainer").style.display = "block";
-    document.getElementById("ri").style.display = "none";
-    console.log('s');
-}
-
-function popup1()
-{
-    /*document.getElementById("pcontainer").style.display = "none";
-    document.getElementById("ri").style.display = "block";
-    console.log('s');*/
-
     var myWindow = window.open("popup.html", "_blank", "width=" + screen.width + ",height=" + screen.height);
     myWindow.moveTo(0, 0);
 
 }
 
-function displayCities(cities) {
-    const cityList = document.getElementById("cityList");
-    cityList.innerHTML = '';
-    cities.forEach(city => {
-        const cityDiv = document.createElement("div");
-        cityDiv.textContent = city;
-        cityDiv.className = 'country-item';
-        cityDiv.onclick = () => selectCity(city);
-        cityList.appendChild(cityDiv);
-    });
-    document.getElementById("citydropdown-content").style.display = "block";
-}
-
-function filterFunction() {
-    const input = document.getElementById("searchInput").value.toLowerCase();
-    const filteredCountries = countries.filter(country =>
-        country.toLowerCase().includes(input)
-    );
-    displayCountries(filteredCountries);
-}
-
-function filterCities() {
-    const input = document.getElementById("citysearchInput").value.toLowerCase();
-    const filteredCities = cities.filter(city =>
-        city.toLowerCase().includes(input)
-    );
-    displayCities(filteredCities);
-}
-
-function selectCity(cityName) {
-    document.getElementById("citysearchInput").value = cityName;
-    document.getElementById("dropdown").style.display = "none";
-    document.getElementById("dropdown-content").style.display = "block";
-    document.getElementById("citydropdown-content").style.display = "none";
-    city = cityName;
-    console.log("Selected City:", cityName);
-    document.getElementById('location').innerHTML = city + ", " + scountry;
-    document.getElementById("dropbox").style.marginBottom = "-30px";
-    window.getWeather(); // Call the globally accessible getWeather function
-}
-
-function toggleDropdown() {
-    console.log('re');
-    const dropdown = document.getElementById("dropdown");
-    if(dropdown.style.display == "block")
-        document.getElementById("dropbox").style.marginBottom = "-30px";
-    else {
-        document.getElementById("dropbox").style.marginBottom = "0";
-        displayCountries(countries);
-    }
-    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    console.log(dropdown.style.display);
-    console.log(document.getElementById('dropdown').style.display);
-    document.getElementById('searchInput').value = "";
-    document.getElementById('citysearchInput').value = "";
-}
-
-function setDim() {
-    document.getElementById('dropdown-content').style.width = document.getElementById('dropbox').clientWidth;
-    console.log(document.getElementById('dropbox').clientWidth);
-    console.log(document.getElementById('dropdown-content').clientWidth);
-}
-
-var scountry = "India";
-
-
 window.onload = function() {
-    fetchCountries();
-    setDim();
+    displayWeather();
+    getCountries();
+    createline();
 };
 
+/*
 window.onclick = function(event) {
     if (!event.target.matches('#dropbox') && !event.target.matches('#dropbox *') && !event.target.matches('.dropdown-content') && !event.target.matches('.dropdown-content *') && !event.target.matches('.citydropdown-content') && !event.target.matches('.citydropdown-content *')) {
         document.getElementById("dropbox").style.marginBottom = "-30px";
         console.log("d");
         document.getElementById("dropdown").style.display = "none";
 }
-}
+}*/
 
 function detectDeviceType() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -469,29 +518,19 @@ function detectDeviceType() {
             
             <h4 style="color: white; margin-left: 15px; margin-bottom: 10px; margin-right: 10px;">Location</h4>
             <div class="horizontal" style="align-items: center; vertical-align: middle;">
-                
-            <!--<div id="dropbox" onclick="toggleDropdown()" class="horizontal left_box" style="margin-bottom: -30px; border: 2px solid #E4F1FF; border-radius: 10px; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; width: 80%;">
-                <h4 class="icon" style="margin: 0; margin-right: 15px;">near_me</h4>
-                <h4 id="location" class="left_label" style="margin: 0;">Mumbai, India</h4>
-                <h4 class="icon" style="margin: 0; margin-right: 15px; margin-left: auto;">arrow_drop_down</h4>
-            </div>-->
                 <div class="select-box horizontal" style="width: 40%;">
                 <!--<h4 class="icon" style="margin: 0; margin-right: 15px;">near_me</h4>-->
-                <select>
+                <select id="countryselect">
                   <option hidden>Country</option>
-                  <option>Rain</option>
-                  <option>Breeze</option>
-                  <option>Snow</option>
+                 
                 </select>
                 </div>
 
                 <div class="select-box horizontal" style="width: 35%;">
                     <!--<h4 class="icon" style="margin: 0; margin-right: 15px;">near_me</h4>-->
-                    <select>
+                    <select id="cityselect">
                       <option hidden>City</option>
-                      <option>Rain</option>
-                      <option>Breeze</option>
-                      <option>Snow</option>
+                     
                     </select>
                 </div>
             </div>
@@ -499,14 +538,19 @@ function detectDeviceType() {
             <h4 style="color: white; margin-left: 15px; margin-bottom: 10px; margin-right: 10px;">Select Date</h4>
             <div class="horizontal" style="align-items: center; vertical-align: middle;">
                 <div class="select-box horizontal" style="width: 80%;">
-                    <h4 class="icon" style="margin: 0; margin-right: 15px;">calendar_month</h4>
-                    <select>
+                    <h4 class="icon" style="margin: 0; margin-right: 10px;">calendar_month</h4>
+                    <select id="dateselect">
                       <option hidden>Date</option>
-                      <option>Rain</option>
-                      <option>Breeze</option>
-                      <option>Snow</option>
+                      
                     </select>
-                </div>
+                </div> 
+                <!--<div class="select-box horizontal" style="width: 35%;">
+                    <h4 class="icon" style="margin: 0; margin-right: 10px;">schedule</h4>
+                    <select id="timeselect">
+                      <option hidden>Time</option>
+                      
+                    </select>
+                </div>-->
             </div>
 
           <!--  <div id="dropdown" class="dropdown">
@@ -545,12 +589,24 @@ function detectDeviceType() {
 
         <div class="top-container" id="ri">
             <button class="icon" id="float" onclick="popup1()">add</button>
-            <div class="card" id="temp-container" style="padding-top: 10px; padding-bottom: 10px;">
-                <h3>Weather Forecast</h3>
-                <canvas id="temperatureChart" style="width: 100%; height: 20%"></canvas>
+            <div class="horizontal" style="gap: 20px; width: 90%; margin-left: auto; margin-right: auto;" >
+            <div class="card" id="temp-container" style="padding-top: 15px; padding-bottom: 15px;">
+                <h3 style="margin-bottom: 5px; margin-top: 5px;">Average Data</h3>
+                <canvas id="temperatureChart" style="width: 40%; height: 60px"></canvas>
             </div>
-            <br>
-            <h3 style="margin-left: 8%;">More Details</h3>
+
+            <div class="card" id="linecontainer" style="padding-top: 15px; padding-bottom: 15px;">
+                <h3 style="margin-bottom: 5px; margin-top: 5px;">Forecasting Hours</h3>
+                <canvas id="linechart" style="width: 40%; height: 60px"></canvas>
+            </div>
+            </div>
+            
+            <div class="horizontal" style="align-items: center; align-content: center;">
+                <h3 style="margin-left: 8%; margin-bottom: 5px;">More Details (</h3>
+                <input type="time" value="" style="background-color: #E4F1FF; border: 0px; margin-top: 15px; font-family: 'Montserrat', 'Arial', sans-serif; font-size: large;">
+                <h3 style="margin-bottom: 5px;"> )</h3> 
+            </div>
+            
             <div class="horizontal">
                 <div class="card" style="width: 15%; padding-top: 10px; padding-bottom: 10px;">
                     <div class="horizontal">
