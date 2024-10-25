@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <title> Admin Control </title>
+    <link rel="stylesheet" href="admin.css">
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <style>
+         table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    tr:hover {
+        background-color: #ddd;
+    }
+     </style>
+   </head>
+<body>
+  <div class="sidebar">
+    <div class="logo-details">
+      <!--<i class='bx bxl-skype' ></i>-->
+        <div class="logo_name">SkyWatcher</div>
+        <i class='bx bx-menu' id="btn" ></i>
+    </div>
+    <ul class="nav-list">
+      <li style="display: none;">
+          <i class='bx bx-search' ></i>
+         <input type="text" placeholder="Search...">
+         <span class="tooltip">Search</span>
+      </li>
+      <li style="display: none;">
+        <a href="#" data-action="Dashboard">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Dashboard</span>
+        </a>
+         <span class="tooltip">Dashboard</span>
+      </li>
+      <li>
+       <a href="#" data-action="users">
+         <i class='bx bx-user' ></i>
+         <span class="links_name">Users</span>
+       </a>
+       <span class="tooltip">Users</span>
+     </li>
+     <li>
+       <a href="#" data-action="country">
+        <i class='bx bxs-flag-alt' ></i>
+         <span class="links_name">Country</span>
+       </a>
+       <span class="tooltip">Country</span>
+     </li>
+     <li>
+       <a href="#" data-action="city">
+        <i class='bx bxs-city' ></i>
+         <span class="links_name">City</span>
+       </a>
+       <span class="tooltip">City</span>
+     </li>
+     <li>
+       <a href="#" data-action="weatherd">
+        <i class='bx bx-cloud-lightning' ></i>
+         <span class="links_name">Weather Details</span>
+       </a>
+       <span class="tooltip">Weather Details</span>
+     </li>
+     <li>
+       <a href="#" data-action="forecasts">
+        <i class='bx bx-stats' ></i>
+         <span class="links_name">Forecasts</span>
+       </a>
+       <span class="tooltip">Forecasts</span>
+     </li>
+     <li>
+       <a href="#" data-action="alerts">
+        <i class='bx bxs-bell-ring' ></i>
+         <span class="links_name">Alerts</span>
+       </a>
+       <span class="tooltip">Alerts</span>
+     </li>
+     <li>
+       <a href="#" data-action="conditions">
+        <i class='bx bx-bar-chart-square'></i>
+         <span class="links_name">Conditions</span>
+       </a>
+       <span class="tooltip">Conditions</span>
+     </li>
+     <li class="profile">
+         <div class="profile-details">
+           <!--<img src="profile.jpg" alt="profileImg">-->
+           <div class="name_job">
+             <div class="name">Soham Shah</div>
+             <div class="job">Student</div>
+           </div>
+         </div>
+         <i class='bx bx-log-out' id="log_out" ></i>
+     </li>
+    </ul>
+  </div>
+  <section class="home-section">
+    <div class="horizontal">
+      <div class="text" id="tit">Dashboard</div>
+      <button class="icon" style="background-color: black; border-radius: 4px;" onclick="forward()">add</button>
+    </div>
+<table id="dataTable" border="1">
+  <thead>
+    <tr id="tableHeader"></tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
+
+  </section>
+  <script>
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+  let searchBtn = document.querySelector(".bx-search");
+  const queryString = window.location.search;
+
+const urlParams = new URLSearchParams(queryString);
+
+const admin = urlParams.get('admin');
+const user = urlParams.get('user');
+
+function forward()
+{
+    window.location.href = `popup.html?admin=yes&user=${user}`;
+}
+
+function createHeaderRow(data) {
+    const tableHeader = document.getElementById("dataTable").querySelector("thead");
+    tableHeader.innerHTML = ""; // Clear any existing headers
+
+    if (data.length > 0) {
+        const headers = Object.keys(data[0]); // Get headers from the first item
+        const headerRow = document.createElement("tr");
+
+        headers.forEach(header => {
+            const th = document.createElement("th");
+            th.textContent = header; // Set header text
+            headerRow.appendChild(th);
+        });
+
+        // Append the header row to the thead
+        tableHeader.appendChild(headerRow);
+    }
+}
+
+function updateTable(data) {
+    // Update header row
+    createHeaderRow(data);
+    
+    const tableBody = document.getElementById("dataTable").querySelector("tbody");
+    tableBody.innerHTML = ""; // Clear any existing rows
+
+    data.forEach((item) => {
+        const row = document.createElement("tr");
+
+        // Create table cells and append them to the row
+        Object.values(item).forEach((value) => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    });
+}
+
+function getdata(action) {
+    fetch(`admin.php?action=${action}`)
+    .then(response => response.json()) 
+    .then(data => {
+        console.log(data);
+        updateTable(data);
+        // Additional code to dynamically display the table with `data` can be added here
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+  document.getElementById('log_out').addEventListener('click', function()
+    {
+        window.location.href = `index.html?admin=yes&user=${user}`;
+    });
+
+  closeBtn.addEventListener("click", ()=>{
+    sidebar.classList.toggle("open");
+    menuBtnChange();//calling the function(optional)
+  });
+
+  searchBtn.addEventListener("click", ()=>{ // Sidebar open when you click on the search iocn
+    sidebar.classList.toggle("open");
+    menuBtnChange(); //calling the function(optional)
+  });
+
+  document.querySelectorAll('.nav-list a').forEach(item => {
+    item.addEventListener('click', event => {
+      event.preventDefault(); // Prevent default link behavior
+      const action = item.getAttribute('data-action');
+      getdata(action); // Call getdata with the action value
+    });
+  });
+
+  // following are the code to change sidebar button(optional)
+  function menuBtnChange() {
+   if(sidebar.classList.contains("open")){
+     closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+   }else {
+     closeBtn.classList.replace("bx-menu-alt-right","bx-menu");//replacing the iocns class
+   }
+  }
+  </script>
+</body>
+</html>
