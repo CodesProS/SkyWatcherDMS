@@ -146,7 +146,7 @@ function createHeaderRow(data) {
     tableHeader.innerHTML = ""; // Clear any existing headers
 
     if (data.length > 0) {
-        const headers = Object.keys(data[0]); // Get headers from the first item
+        const headers = ["Sr", ...Object.keys(data[0]), "Actions"]; // Add row number and actions headers
         const headerRow = document.createElement("tr");
 
         headers.forEach(header => {
@@ -160,26 +160,68 @@ function createHeaderRow(data) {
     }
 }
 
-function updateTable(data) {
+function updateTable(data, currentTable) {
     // Update header row
     createHeaderRow(data);
     
     const tableBody = document.getElementById("dataTable").querySelector("tbody");
     tableBody.innerHTML = ""; // Clear any existing rows
 
-    data.forEach((item) => {
+    data.forEach((item, index) => {
         const row = document.createElement("tr");
 
-        // Create table cells and append them to the row
+        // Create and append row number cell
+        const rowNumberCell = document.createElement("td");
+        rowNumberCell.textContent = index + 1; // Row number starts at 1
+        row.appendChild(rowNumberCell);
+
+        // Create table cells for data
         Object.values(item).forEach((value) => {
             const cell = document.createElement("td");
             cell.textContent = value;
             row.appendChild(cell);
         });
 
+        // Create and append delete icon cell
+        const deleteCell = document.createElement("td");
+        const deleteIcon = document.createElement("span");
+        deleteIcon.textContent = "🗑️"; // Unicode trash bin icon
+        deleteIcon.style.cursor = "pointer";
+        deleteIcon.addEventListener("click", () => deleteRow(index, Object.values(item)[0], currentTable)); // Pass index, column value, and table name
+        deleteCell.appendChild(deleteIcon);
+        row.appendChild(deleteCell);
+
         // Append the row to the table body
         tableBody.appendChild(row);
     });
+}
+
+// Function to delete a row based on index, column value, and current table
+function deleteRow(rowIndex, columnValue, currentTable) {
+    // Define dynamic action based on the current table
+    const action = `delete${currentTable}`;
+
+    // Send POST request to admin.php
+    fetch('admin.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            action: action,     // Dynamic action based on the current table
+            index: rowIndex,
+            value: columnValue  // Include the adjacent column value
+        })
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Log the response from the server
+
+        // Remove the row from the table in the DOM
+        const tableBody = document.getElementById("dataTable").querySelector("tbody");
+        tableBody.deleteRow(rowIndex);
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function getdata(action) {
