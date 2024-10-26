@@ -20,18 +20,21 @@
 
 var city = 'Mumbai';
 var bar = "";
-       document.addEventListener('DOMContentLoaded', function() {
+var line = "";
 const queryString = window.location.search;
 
 const urlParams = new URLSearchParams(queryString);
 
-const admin = urlParams.get('admin');
-const user = urlParams.get('user');
+var admin = urlParams.get('admin');
+var user = urlParams.get('user');
+       document.addEventListener('DOMContentLoaded', function() {
+
 
 if (admin === 'no') {
     document.getElementById('float').style.display = "none";
 }
-console.log(admin);
+document.getElementById('hello').innerHTML = "Hello "+user;
+console.log(user);
 
     const deviceType = detectDeviceType();
         if(deviceType == "Mobile")
@@ -63,8 +66,41 @@ console.log(admin);
         datea = this.value;
         console.log(typeof(datea));
         getRecordsThroughDate();
+        getAverageData();
+    });
+
+    document.getElementById('timeselect').addEventListener('change', function(event) {
+        console.log(event.target.value);
+        console.log(findClosestTimeWithIndex(forecastdata, event.target.value));
+        const disdata = findClosestTimeWithIndex(forecastdata, event.target.value).closest
+        getWeatherDetails(disdata);
     });
 });
+
+function timeToMinutes(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+// Function to find the closest time and its index
+function findClosestTimeWithIndex(data, inputTime) {
+    const inputMinutes = timeToMinutes(inputTime);
+    let closestIndex = 0;
+    let minDiff = Infinity; // Start with infinity as the minimum difference
+
+    for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        const itemMinutes = timeToMinutes(item.Time);
+        const diff = Math.abs(inputMinutes - itemMinutes);
+
+        if (diff < minDiff) {
+            minDiff = diff;
+            closestIndex = i; // Store the index of the closest time
+        }
+    }
+
+    return { closest: data[closestIndex], index: closestIndex };
+}
 
 var scountry = "India";
 var countryid = 1;
@@ -78,8 +114,8 @@ var cloudiness = 100;
 var visibility = 100;
 var windspeed = 20;
 var pressure = 10;
-var iconCode = 0;
-var destype = "Clear Weather";
+var iconCode = 6;
+var destype = "Clouds";
 
 var countrydata = [];
 var citydata = [];
@@ -96,59 +132,65 @@ function getRecordsThroughDate()
     .then(data => {
         console.log("Records ",data);  
         forecastdata = data;
-        //weatherid = data[0].WeatherID;
-        console.log("Wetaher id ", weatherid);
-        forecastid = data[0].ForescastID;
-        getWeatherDetails("Weather", weatherid);
-    })
-    .catch(error => console.error('Error:', error));
-}
+        
+        const temperatures = [];
+        const ctimes = [];
 
-function getWeatherDetails(type, id)
-{
-    //console.log(weatherid);
-    fetch(`getdata.php?action=${"weatherdetails"}&weatherid=${id}`)
-    .then(response => response.json()) 
-    .then(data => {
-        console.log(data);
-        weatherdata = data; 
-        humidity = data[0].Humidity;
-        temperature = data[0].Temperature;
-        pressure = data[0].Pressure;
-        cloudiness = data[0].Cloudiness;
-        visibility = data[0].Visibility;
-        windspeed = data[0].WindSpeed; 
-        iconCode = parseInt(data[0].iconcode);
-        destype = data[0].ConditionType;
-        if(type === "Weather")
-    {
-        getForecast();
-        displayWeather();
-    }
-    else 
-    {
-        if(bar == "")
-            createbar(humidity, windspeed, cloudiness, temperature, visibility);
+        forecastdata.forEach(item => {
+        temperatures.push(item.Temperature);
+        ctimes.push(item.Time);
+        });
+
+        if(line == "")
+        {
+            createline(temperature);
+        }
         else
         {
-            bar.data.datasets[0].data = [humidity, windspeed, cloudiness, temperature, visibility];
-            bar.update();
+            console.log(temperatures);
+            line.data.datasets[0].data = temperatures;
+            line.data.labels = ctimes;
+            line.update();
         }
-    }
 
+
+        //weatherid = data[0].WeatherID;
+        //console.log("Wetaher id ", weatherid);
+        //forecastid = data[0].ForescastID;
+        //getWeatherDetails("Weather", weatherid);
     })
     .catch(error => console.error('Error:', error));
 }
 
-function getForecast()
+function getWeatherDetails(dataselected)
+{
+        weatherdata = dataselected; 
+        humidity = dataselected.Humidity;
+        temperature = dataselected.Temperature;
+        pressure = dataselected.Pressure;
+        cloudiness = dataselected.Cloudiness;
+        visibility = dataselected.Visibility;
+        windspeed = dataselected.WindSpeed; 
+        iconCode = parseInt(dataselected.iconcode);
+        destype = dataselected.ConditionType;
+        
+        displayWeather();
+}
+
+function getAverageData()
 {
     //console.log(weatherid);
-    fetch(`getdata.php?action=${"forecasts"}&forecastid=${forecastid}`)
+    fetch(`getdata.php?action=${"averagedata"}&cityid=${cityid}&dates=${datea}`)
     .then(response => response.json()) 
     .then(data => {
-        console.log(data);
-        forecastdata = data;
-        getWeatherDetails("Forecast",data[0].WeatherID);
+        console.log("Averagedata:\n",data);
+        if(bar == "")
+            createbar(data[0].Avghumid, data[0].Avgwind, data[0].Avgcloud, data[0].Avgtemp, data[0].Avgvis);
+        else
+        {
+            bar.data.datasets[0].data = [data[0].Avghumid, data[0].Avgwind, data[0].Avgcloud, data[0].Avgtemp, data[0].Avgvis];
+            bar.update();
+        }
     })
     .catch(error => console.error('Error:', error));
 }
@@ -171,6 +213,11 @@ function getDate()
         });
     })
     .catch(error => console.error('Error:', error));
+}
+
+function back()
+{
+    window.location.href = "login.html";
 }
 
 function getCountries()
@@ -229,7 +276,7 @@ fetch(`getdata.php?action=${"country"}`)
         
         createring(humidity);
         document.getElementById("temp").innerHTML = temperature + " °C";
-        document.getElementById("vis").innerHTML = visibility + " m";
+        document.getElementById("vis").innerHTML = visibility + " km";
         document.getElementById("feels").innerHTML = temperature + " °C";
 
         document.getElementById('pcloud').style.width = (cloudiness) + '%';
@@ -240,13 +287,13 @@ fetch(`getdata.php?action=${"country"}`)
 
         document.getElementById('wi').innerHTML = destype;
 
-        if(bar == "")
+        /*if(bar == "")
             createbar(humidity, windspeed, cloudiness, temperature, visibility);
         else
         {
             bar.data.datasets[0].data = [humidity, windspeed, cloudiness, temperature, visibility];
             bar.update();
-        }
+        }*/
 
         var icon = "";
         document.getElementById('dcloud').style.display = "none";
@@ -270,10 +317,10 @@ fetch(`getdata.php?action=${"country"}`)
         case (iconCode == 1): //Breeze
             icon = "Images/tree.png";
             break;
-        case (iconCode == 6): //None
+        case (iconCode == 0): //None
             icon = "";
             break;
-        case (iconCode === 0):
+        case (iconCode === 6):
             icon = "Images/cloud.png";
             document.getElementById('dcloud').style.display = "block";
             break;
@@ -357,7 +404,7 @@ fetch(`getdata.php?action=${"country"}`)
         chart.render();
     }
 
-    function createline()
+    function createline(temp)
     {
         document.getElementById('linechart').innerHTML = "";
         var linechart = document.getElementById('linechart').getContext('2d');
@@ -368,7 +415,7 @@ fetch(`getdata.php?action=${"country"}`)
             datasets: [
             {
                     label: 'Temperature (°C)',
-                    data: [22, 24, 23, 25, 26, 27, 26],
+                    data: temp,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     fill: false,
@@ -416,6 +463,7 @@ fetch(`getdata.php?action=${"country"}`)
             }
         }
     });
+    line = temperatureline;
     }
 
     function createbar(h, w, c, t, v)
@@ -470,25 +518,16 @@ bar = comparisonChart;
 
     function popup1()
 {
-    var myWindow = window.open("popup.html", "_blank", "width=" + screen.width + ",height=" + screen.height);
-    myWindow.moveTo(0, 0);
-
+    //window.location.href = "popup.html";
+    window.location.href = `admin.html?admin=yes&user=${user}`;
 }
 
 window.onload = function() {
     displayWeather();
     getCountries();
-    createline();
+    createline([22, 24, 23, 25, 26, 27, 26]);
+    createbar(45, 12.4, 67, 24, 10);
 };
-
-/*
-window.onclick = function(event) {
-    if (!event.target.matches('#dropbox') && !event.target.matches('#dropbox *') && !event.target.matches('.dropdown-content') && !event.target.matches('.dropdown-content *') && !event.target.matches('.citydropdown-content') && !event.target.matches('.citydropdown-content *')) {
-        document.getElementById("dropbox").style.marginBottom = "-30px";
-        console.log("d");
-        document.getElementById("dropdown").style.display = "none";
-}
-}*/
 
 function detectDeviceType() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -506,8 +545,6 @@ function detectDeviceType() {
             return "Desktop";
         }
 
-        // Display the detected device type
-    
         </script>
         
 
@@ -515,7 +552,12 @@ function detectDeviceType() {
        
     <div class="horizontal" id="container">
         <div id="left">
+            <div class="horizontal">
+            <h2 id="hello" style="margin: 0; margin-left: 20px; color: white; margin-top: 15px; margin-bottom: -10px; font-family: 'Sacramento', cursive;">Hello Soham</h2>
             
+                <button style="border-width: 2px; border-color: white; border-radius: 10px; border-style: solid; margin-top: 15px; margin-left: 10px; padding : 5px; padding-left: 10px; padding-right: 10px; font-family: 'Montserrat', 'Arial', sans-serif; color: white;" onclick="back()">Logout</button>
+
+            </div>
             <h4 style="color: white; margin-left: 15px; margin-bottom: 10px; margin-right: 10px;">Location</h4>
             <div class="horizontal" style="align-items: center; vertical-align: middle;">
                 <div class="select-box horizontal" style="width: 40%;">
@@ -567,15 +609,15 @@ function detectDeviceType() {
             <div class="left_box" style="margin-bottom: -45px; display: none;"> <h5 id="today" class="left_label light">28 Sept</h4></div>
           
             <div>
-            <h1 style="margin-left: auto; margin-right: auto; width: 100%; text-align: center; margin-bottom: 10px;" id="temp">31 °</h1>
-            <div class="horizontal">
+            <h1 style="margin-left: auto; margin-right: auto; width: 100%; text-align: center; margin-bottom: 10px; margin-top: 20px;" id="temp">31 °</h1>
+            <div class="horizontal" style="margin-bottom: 5px;">
                 <h4 class="icon" style="margin: 0; margin-right: 15px; margin-left: auto;">info</h4>
                 <h3 id="wi" class="left_label_light" style="color: white; text-align: center; margin-right: auto;">Moderate rain</h3>
             </div>
         </div>
             <div style="width: 100%;">
                 
-            <br>
+            
                 <img id="cloud1" class="cloudright" src="Images\cloud.png" alt="Cloud Image">
                 
                 <img id="cloud2" class="cloudleft" src="Images\cloud.png" alt="Cloud Image">
@@ -588,11 +630,11 @@ function detectDeviceType() {
         </div>
 
         <div class="top-container" id="ri">
-            <button class="icon" id="float" onclick="popup1()">add</button>
+            <button class="icon" id="float" onclick="popup1()">leaderboard</button>
             <div class="horizontal" style="gap: 20px; width: 90%; margin-left: auto; margin-right: auto;" >
             <div class="card" id="temp-container" style="padding-top: 15px; padding-bottom: 15px;">
                 <h3 style="margin-bottom: 5px; margin-top: 5px;">Average Data</h3>
-                <canvas id="temperatureChart" style="width: 40%; height: 60px"></canvas>
+                <canvas id="temperatureChart" style="width: 40%; height: 60px;"></canvas>
             </div>
 
             <div class="card" id="linecontainer" style="padding-top: 15px; padding-bottom: 15px;">
@@ -603,7 +645,7 @@ function detectDeviceType() {
             
             <div class="horizontal" style="align-items: center; align-content: center;">
                 <h3 style="margin-left: 8%; margin-bottom: 5px;">More Details (</h3>
-                <input type="time" value="" style="background-color: #E4F1FF; border: 0px; margin-top: 15px; font-family: 'Montserrat', 'Arial', sans-serif; font-size: large;">
+                <input type="time" id="timeselect" value="" style="background-color: #E4F1FF; border: 0px; margin-top: 15px; font-family: 'Montserrat', 'Arial', sans-serif; font-size: large;">
                 <h3 style="margin-bottom: 5px;"> )</h3> 
             </div>
             
