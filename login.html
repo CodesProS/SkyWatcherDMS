@@ -25,6 +25,7 @@
   </head>
 
   <body>
+    <div class="lightning-effect"></div>
     <div class="horizontal round" style="width: 60%; height: 600px; backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px); padding: 0%; padding-top: 5px; padding-bottom: 5px; margin-right: 5px; background-color: #1c1b29">
       <div style="height: 100%; width: 40%; margin-right: auto; margin-left: 50px; display: flex;
@@ -51,10 +52,12 @@
         <!--<center><div id="lottie" style="height: 100px; width: 100px;"></div></center>-->
         <center><h2>Welcome back!</h2></center>
 
-        <form action="submit">
+        <form action="login_register.php" method="POST">
+          <input type="hidden" name="action" value="login">
+          <input type="hidden" name="isadmin" value="No">
           <div class="field email-field">
             <div class="input-field">
-              <input type="email" placeholder="Enter your username" class="email" />
+              <input type="username" placeholder="Enter your username" class="email" name="lusername" />
             </div>
             <span class="error email-error">
               <i class="bx bx-error-circle error-icon"></i>
@@ -64,7 +67,7 @@
 
           <div class="field create-password">
             <div class="input-field">
-              <input type="password" placeholder="Enter Password" class="password" />
+              <input type="password" placeholder="Enter Password" class="password" name="lpassword" />
               <i class="bx bx-hide show-hide"></i>
             </div>
             <span class="error password-error">
@@ -90,21 +93,22 @@
       <div class="container" id="registerform" style="display: none; height: 100%; width: 45%;">
         <center><img src="Images/profile.png" height="100px" width="100px"></center>
         <header>Signup</header>
-        <form action="submit">
+        <form action="login_register.php" method="POST">
+          <input type="hidden" name="action" value="Register">
           <div class="user-details">
         
             <div class="input-box">
-              <input type="name" placeholder="FirstName" required>
+              <input type="name" placeholder="FirstName" name="rfname" id="rfname" />
             </div>
   
             <div class="input-box">
-              <input type="name" placeholder="LastName" required>
+              <input type="name" placeholder="LastName" name="rlname" id="rlname" />
             </div>
           </div>
 
           <div class="field email-field">
             <div class="input-field">
-              <input type="username" placeholder="Enter your username" class="email" />
+              <input type="username" placeholder="Enter your username" class="email" name="rusername" id="rusername" />
             </div>
             <span class="error username-error">
               <i class="bx bx-error-circle error-icon"></i>
@@ -117,6 +121,8 @@
                 type="password"
                 placeholder="Create password"
                 class="password"
+                name="rpassword"
+                id="rpassword"
               />
               <i class="bx bx-hide show-hide"></i>
             </div>
@@ -133,121 +139,159 @@
   
   
           <div class="input-field button">
-            <input type="submit" value="Register" />
+            <input type="submit" name="action" value="Register" />
           </div>
         </form>
     </div>
 
     <!-- Form Validation Script -->
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-
-        document.getElementById('reg').addEventListener('click', 
-          function() 
-          {
-            document.getElementById('container').style.display = 'none';
-            document.getElementById('registerform').style.display = 'block';
-          }
-        )
-
-        document.getElementById('log').addEventListener('click', 
-          function() 
-          {
-            document.getElementById('container').style.display = 'block';
-            document.getElementById('registerform').style.display = 'none';
-          }
-        )
-
+      document.addEventListener("DOMContentLoaded", function () {
+        // Switching between Login and Register forms
+        document.getElementById("reg").addEventListener("click", function () {
+          document.getElementById("container").style.display = "none";
+          document.getElementById("registerform").style.display = "block";
+        });
+      
+        document.getElementById("log").addEventListener("click", function () {
+          document.getElementById("container").style.display = "block";
+          document.getElementById("registerform").style.display = "none";
+        });
+      
         const loginForm = document.querySelector("#container form"),
-    loginEmailField = loginForm.querySelector(".email-field"),
-    loginEmailInput = loginEmailField.querySelector(".email"),
-    loginPassField = loginForm.querySelector(".create-password"),
-    loginPassInput = loginPassField.querySelector(".password");
-
-  // For Register Form (registerform)
-  const registerForm = document.querySelector("#registerform form"),
-    registerEmailField = registerForm.querySelector(".email-field"),
-    registerEmailInput = registerEmailField.querySelector(".email"),
-    registerPassField = registerForm.querySelector(".create-password"),
-    registerPassInput = registerPassField.querySelector(".password");
-    /*registerConfirmPassField = registerForm.querySelector(".confirm-password"),
-    registerConfirmPassInput = registerConfirmPassField.querySelector(".cPassword");*/
-
-  // Email Validation
-  function checkEmail(emailInput, emailField) {
-    const usernamePattern = /^[a-zA-Z0-9_]{3,15}$/;
-if (!emailInput.value.match(usernamePattern)) {
-  return emailField.classList.add("invalid");
-}
-emailField.classList.remove("invalid");
-
-  }
-
-  // Password Validation
-  function checkPassword(passInput, passField) {
-    const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passInput.value.match(passPattern)) {
-      return passField.classList.add("invalid");
-    }
-    passField.classList.remove("invalid");
-  }
-
-  // Confirm Password Validation
-  function checkConfirmPassword(passInput, confirmPassInput, confirmPassField) {
-    if (passInput.value !== confirmPassInput.value) {
-      return confirmPassField.classList.add("invalid");
-    }
-    confirmPassField.classList.remove("invalid");
-  }
-
-  // Hide and show password
-  const eyeIcons = document.querySelectorAll(".show-hide");
-  eyeIcons.forEach((eyeIcon) => {
-    eyeIcon.addEventListener("click", () => {
-      const pInput = eyeIcon.parentElement.querySelector("input");
-      if (pInput.type === "password") {
-        eyeIcon.classList.replace("bx-hide", "bx-show");
-        return (pInput.type = "text");
-      }
-      eyeIcon.classList.replace("bx-show", "bx-hide");
-      pInput.type = "password";
-    });
-  });
-
-  // Form validation for Login
-  loginForm.addEventListener("submit", (e) => {
-    e.preventDefault(); // Prevent form submission
-    checkEmail(loginEmailInput, loginEmailField);
-    checkPassword(loginPassInput, loginPassField);
-
-    if (!loginEmailField.classList.contains("invalid") && !loginPassField.classList.contains("invalid")) {
-      location.href = loginForm.getAttribute("action"); // Simulate form submission
-    }
-  });
-
-  // Form validation for Register
-  registerForm.addEventListener("submit", (e) => {
-    e.preventDefault(); // Prevent form submission
-    checkEmail(registerEmailInput, registerEmailField);
-    checkPassword(registerPassInput, registerPassField);
-    /*checkConfirmPassword(registerPassInput, registerConfirmPassInput, registerConfirmPassField);*/
-
-    if (!registerEmailField.classList.contains("invalid") && 
-        !registerPassField.classList.contains("invalid") && 
-        !registerConfirmPassField.classList.contains("invalid")) {
-      location.href = registerForm.getAttribute("action"); // Simulate form submission
-    }
-  });
-
-  // Add real-time validation on keyup
-  loginEmailInput.addEventListener("keyup", () => checkEmail(loginEmailInput, loginEmailField));
-  loginPassInput.addEventListener("keyup", () => checkPassword(loginPassInput, loginPassField));
-
-  registerEmailInput.addEventListener("keyup", () => checkEmail(registerEmailInput, registerEmailField));
-  registerPassInput.addEventListener("keyup", () => checkPassword(registerPassInput, registerPassField));
-  registerConfirmPassInput.addEventListener("keyup", () => checkConfirmPassword(registerPassInput, registerConfirmPassInput, registerConfirmPassField));
-
-});
-    </script>
+          loginEmailField = loginForm.querySelector(".email-field"),
+          loginEmailInput = loginEmailField.querySelector(".email"),
+          loginPassField = loginForm.querySelector(".create-password"),
+          loginPassInput = loginPassField.querySelector(".password");
+      
+        // For Register Form (registerform)
+        const registerForm = document.querySelector("#registerform form"),
+          registerEmailField = registerForm.querySelector(".email-field"),
+          registerEmailInput = registerEmailField.querySelector(".email"),
+          registerPassField = registerForm.querySelector(".create-password"),
+          registerPassInput = registerPassField.querySelector(".password");
+      
+        // Email Validation
+        function checkEmail(emailInput, emailField) {
+          const usernamePattern = /^[a-zA-Z0-9_]{3,15}$/;
+          if (!emailInput.value.match(usernamePattern)) {
+            return emailField.classList.add("invalid");
+          }
+          emailField.classList.remove("invalid");
+        }
+      
+        // Password Validation
+        function checkPassword(passInput, passField) {
+          const passPattern =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+          if (!passInput.value.match(passPattern)) {
+            return passField.classList.add("invalid");
+          }
+          passField.classList.remove("invalid");
+        }
+      
+        // Hide and show password
+        const eyeIcons = document.querySelectorAll(".show-hide");
+        eyeIcons.forEach((eyeIcon) => {
+          eyeIcon.addEventListener("click", () => {
+            const pInput = eyeIcon.parentElement.querySelector("input");
+            if (pInput.type === "password") {
+              eyeIcon.classList.replace("bx-hide", "bx-show");
+              return (pInput.type = "text");
+            }
+            eyeIcon.classList.replace("bx-show", "bx-hide");
+            pInput.type = "password";
+          });
+        });
+      
+        // Form validation for Login and AJAX request
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault(); // Prevent form submission
+          checkEmail(loginEmailInput, loginEmailField);
+          checkPassword(loginPassInput, loginPassField);
+      
+          if (
+            !loginEmailField.classList.contains("invalid") &&
+            !loginPassField.classList.contains("invalid")
+          ) {
+            const formData = new FormData(loginForm);
+            fetch("login_register.php", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.text())
+              .then((data) => {
+                console.log(data);
+                var user = data.replace("Yes","");
+                user = user.replace("No", "");
+                if (data.includes("Yes")) {
+                  alert("Admin Login successful!");
+                  window.location.href = `index.html?admin=yes&user=${user}`;
+                } 
+                else if (data.includes("No"))
+                {
+                  alert("User Login successful!");
+                  window.location.href = `index.html?admin=no&user=${user}`;
+                }
+                else {
+                  alert("Invalid username or password.");
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error); // Debug: Print error
+              });
+          }
+        });
+      
+        // Form validation for Register and AJAX request
+        registerForm.addEventListener("submit", (e) => {
+          e.preventDefault(); // Prevent form submission
+          checkEmail(registerEmailInput, registerEmailField);
+          checkPassword(registerPassInput, registerPassField);
+      
+          if (
+            !registerEmailField.classList.contains("invalid") &&
+            !registerPassField.classList.contains("invalid")
+          ) {
+            const formData = new FormData(registerForm);
+            fetch("login_register.php", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.text())
+              .then((data) => {
+                console.log(data); // Debug: Print server response
+                if (data.includes("Rec")) {
+                  alert("Registration successful!");
+                  window.location.href = "index.html";
+                  // Add any further actions, like clearing the form or redirecting
+                } else {
+                  alert("Registration failed. Please try again.");
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error); // Debug: Print error
+              });
+          }
+        });
+      
+        // Add real-time validation on keyup
+        loginEmailInput.addEventListener("keyup", () =>
+          checkEmail(loginEmailInput, loginEmailField)
+        );
+        loginPassInput.addEventListener("keyup", () =>
+          checkPassword(loginPassInput, loginPassField)
+        );
+      
+        registerEmailInput.addEventListener("keyup", () =>
+          checkEmail(registerEmailInput, registerEmailField)
+        );
+        registerPassInput.addEventListener("keyup", () =>
+          checkPassword(registerPassInput, registerPassField)
+        );
+      });
+      </script>
+      
+      
   </body>
 </html>
