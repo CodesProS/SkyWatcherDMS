@@ -46,11 +46,11 @@ SkyWatcher is a responsive weather dashboard that lets users log in, pick a loca
 
 ### Dashboard
 
-![SkyWatcher Dashboard](images/Main.jpeg)
+![SkyWatcher Dashboard](Images/Main.jpeg)
 
 ### Login Screen
 
-![SkyWatcher Login Screen](images/Login.jpeg)
+![SkyWatcher Login Screen](Images/Login.jpeg)
 
 ## Tech Stack
 
