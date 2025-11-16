@@ -1,83 +1,68 @@
-# SkyWatcher – Weather Management System
+# SkyWatcher 🌤️
 
-SkyWatcher is a web-based weather management platform that provides detailed real-time and historical weather data for cities around the world. It helps users analyse temperature, humidity, wind speed, visibility, cloudiness, and atmospheric pressure for any chosen city and date, with a clean, user-friendly interface. :contentReference[oaicite:0]{index=0}  
+SkyWatcher is a responsive weather dashboard that lets users log in, pick a location and date, and view detailed weather insights in a clean, modern UI.
 
 ## Features
 
-- **Detailed Weather Metrics**
-  - Temperature (°C)  
-  - Humidity (%)  
-  - Wind speed (m/s)  
-  - Visibility (km)  
-  - Cloudiness (%)  
-  - Atmospheric pressure (hPa) 
+- **User Login/Registration**
+  - Simple login screen with username & password fields.
+  - Clear “Register” link for new users.
 
-- **City & Date-Based Queries**
-  - Select any city (worldwide) and view weather data for a specific date and, if needed, a specific time.  
-  - Useful for daily planning, trip preparation, or climate pattern study.
+- **Location & Date Selection**
+  - Dropdowns to select **country** and **city**.
+  - Date picker to view weather for a specific day.
 
-- **Interactive Visualizations**
-  - Bar graph showing average values of multiple weather metrics for selected dates.  
-  - Line graph showing how a specific weather variable changes over time. 
+- **Current Conditions Panel**
+  - Big, centered **temperature display** (°C).
+  - Short description (e.g., *Clouds*, *Clear*, *Rain*).
+  - Friendly “Hello, Your Name” header and logout button.
 
-- **Role-Based Access Control**
-  - **Admin**
-    - View full/raw datasets  
-    - Insert, update, delete weather records  
-    - Create and manage alerts for cities  
-    - Assign or revoke admin privileges for other accounts  
-  - **User**
-    - View summarized, safe weather information with restricted operations (data abstraction). 
+- **Average Data Section**
+  - Bar chart summarizing:
+    - Humidity (%)
+    - Wind speed (m/s)
+    - Cloudiness (%)
+    - Temperature (°C)
+    - Visibility (km)
 
-- **Weather Alerts for Admins**
-  - Admins can configure alerts to detect hazardous conditions early (e.g., extreme storms, sudden drops in pressure).  
-  - Useful for safety planning and proactive response.   
+- **Forecasting Hours**
+  - Line chart of temperature through the day by hour (e.g., 11:00–16:00).
+  - Helps users see trends rather than just a single value.
 
-- **Secure, Modern UI**
-  - Login / signup system with an animated, cloud-themed landing page.  
-  - Responsive layout and smooth animations for a better user experience. 
+- **Detailed Metrics**
+  - **Feels Like** temperature card with a slider-style visualization.
+  - **Humidity** ring chart (percentage).
+  - **Cloudiness** with percentage and a small progress bar.
+  - **Wind Speed** (m/s).
+  - **Visibility** (km).
+  - **Atmospheric Pressure** (hPa).
+
+- **Clean UI**
+  - Light blue theme with cloud illustrations.
+  - Card-based layout for each metric.
+  - Designed to be intuitive even for non-technical users.
+
+## Screenshots
+
+### Dashboard
+
+![SkyWatcher Dashboard](images/Main.jpeg)
+
+### Login Screen
+
+![SkyWatcher Login Screen](images/Login.jpeg)
+
 ## Tech Stack
 
-- **Frontend**
-  - HTML  
-  - CSS (custom styling + animations)  
-  - JavaScript  
-  - [Chart.js](https://www.chartjs.org/) for graphs (bar & line charts)  
+- **Frontend:** HTML, CSS, JavaScript  
+- **Charts:** Chart.js 
+- **Backend / Database:** PHP, MySQL
 
-- **Backend**
-  - PHP  
-  - AJAX for async requests (form submission without page reload) 
+## How It Works 
 
-- **Database**
-  - MySQL (via XAMPP’s MySQL server) 
-
-- **Environment**
-  - XAMPP (Apache + MySQL + PHP) for local development and hosting. 
-
-## Database Design
-
-SkyWatcher uses a relational schema designed for clean weather and account management. Key tables include: 
-- **Country**
-  - Stores countries with coordinates.  
-
-- **City**
-  - Stores cities, linked to `Country`.  
-
-- **Conditions**
-  - Describes high-level condition types (e.g., Clear, Cloudy, Drizzle, Thunder, Snow) with summaries. 
-
-- **WeatherDetails**
-  - Stores numeric weather metrics (temperature, humidity, wind, cloudiness, visibility), linked to `Conditions`.  
-
-- **Forecasts**
-  - Contains dated forecasts: `FDate`, `CTime`, links to `WeatherDetails` and `City`.  
-
-- **Alerts**
-  - Stores city-specific alert types and descriptions, linked to `City`.  
-
-- **Account**
-  - Stores user credentials and profile info, plus `IsAdmin` flag for role-based access.  
-
-*(Full SQL statements are in the project’s SQL/script files.)* 
-
-
+1. User logs in through the **login page**.
+2. User selects **country**, **city**, and **date**.
+3. The app fetches weather data from a weather API / database.
+4. Data is displayed on the dashboard:
+   - Current conditions on the left.
+   - Charts and detailed cards in the main panel.
